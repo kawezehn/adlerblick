@@ -660,8 +660,9 @@ function learnFrom(e, tag) {
   const keys = Object.keys(S.learn); if (keys.length > 600) keys.slice(0, keys.length - 600).forEach(k => delete S.learn[k]);
 }
 function chipsHTML(e) {
-  const sug = suggestAll(e);
-  return topicsFor(e.type).map(t => `<button type="button" data-act="tag" data-v="${esc(t)}" class="${e.tags.includes(t) ? 'sel' : sug.includes(t) ? 'sug' : ''}" aria-pressed="${e.tags.includes(t)}">${esc(t)}</button>`).join('')
+  const sug = suggestAll(e), list = topicsFor(e.type);
+  e.tags.forEach(t => { if (!list.includes(t)) list.push(t); });
+  return list.map(t => `<button type="button" data-act="tag" data-v="${esc(t)}" class="${e.tags.includes(t) ? 'sel' : sug.includes(t) ? 'sug' : ''}" aria-pressed="${e.tags.includes(t)}">${esc(t)}</button>`).join('')
     + (e.addingTag ? `<input data-f="newtag" placeholder="Neues Thema" maxlength="20" aria-label="Neues Thema">` : `<button type="button" data-act="addtag">+ Eigenes</button>`);
 }
 
@@ -705,7 +706,7 @@ function entryCard(e) {
 }
 renderers.entry = () => {
   const el = $('#s-entry'), t = today(), day = S.days[ED.date] || {};
-  const idx = { ort:0, neg:1, negA:1, pos:2, posA:2, done:3 }[ED.step];
+  const idx = { ort:0, neg:1, pos:2, adler:3, done:4 }[ED.step];
   let body = '';
   if (ED.step === 'ort') {
     body = `${say(`Schön, dass du da bist, ${esc(S.profile.name)}. Wo warst du ${ED.date === t ? 'heute' : 'an diesem Tag'}?`)}
@@ -721,9 +722,9 @@ renderers.entry = () => {
     body += `<div class="stack" id="cards">${dayEntries(type).map(entryCard).join('')}</div>
       <button class="add" data-act="add" data-v="${type}">+ Weiteres ${type === 'neg' ? 'Erlebnis' : 'schönes Erlebnis'}</button>`;
     body += type === 'neg'
-      ? `<button class="btn" data-act="lift" data-v="neg">Weiter: mit dem Adler abheben</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
-      : `<button class="btn" data-act="lift" data-v="pos">Weiter: mit dem Adler abheben</button>`;
-  } else if (ED.step === 'negA' || ED.step === 'posA') {
+      ? `<button class="btn" data-act="next" data-v="pos">Weiter zu den schönen Momenten</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
+      : `<button class="btn" data-act="lift">Weiter: mit dem Adler abheben</button>`;
+  } else if (ED.step === 'adler') {
     body = adlerBody();
   } else {
     prune(); S.days[ED.date] = { ...(S.days[ED.date] || {}), done:true, skip:false }; save();
@@ -739,14 +740,13 @@ renderers.entry = () => {
   }
   el.innerHTML = `${topbar('Tag eintragen')}
     <div class="datenav"><button data-act="prev" aria-label="Vorheriger Tag">‹</button><b>${esc(fmtDay(ED.date))}${ORTE[day.ort] && idx > 0 ? ` <span class="muted" style="font-weight:400">· ${ORTE[day.ort]}</span>` : ''}</b><button data-act="nextday" aria-label="Nächster Tag" ${ED.date >= t ? 'disabled' : ''}>›</button></div>
-    ${idx < 3 ? `<div class="steps">${['1 · Ort','2 · Schweres','3 · Schönes'].map((s, i) => `<span class="${i === idx ? 'on' : ''}">${s}</span>`).join('')}</div>` : ''}
+    ${idx < 4 ? `<div class="steps">${['1 · Ort','2 · Schweres','3 · Schönes','4 · Adlerblick'].map((s, i) => `<span class="${i === idx ? 'on' : ''}">${s}</span>`).join('')}</div>` : ''}
     ${body}`;
   hydrate(el);
-  if (ED.step === 'negA' || ED.step === 'posA') startBreath();
+  if (ED.step === 'adler') startBreath();
 };
 const SEEN = new Set();
-const aType = () => ED.step === 'negA' ? 'neg' : 'pos';
-const aList = () => dayEntries(aType()).filter(valid);
+const aList = () => S.entries.filter(e => e.date === ED.date && valid(e)).sort((a, b) => (a.type === 'neg' ? 0 : 1) - (b.type === 'neg' ? 0 : 1));
 function skySVG() {
   return `<svg viewBox="0 0 360 230" aria-hidden="true">
    <defs><linearGradient id="hz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE3C4"/><stop offset=".35" stop-color="#F6D7A8"/><stop offset="1" stop-color="#E9D3A6"/></linearGradient></defs>
@@ -771,29 +771,27 @@ function skySVG() {
    </g></svg>`;
 }
 function adlerBody() {
-  const list = aList(), neg = aType() === 'neg';
+  const list = aList();
   if (ED.ai >= list.length) ED.ai = Math.max(0, list.length - 1);
   const e = list[ED.ai]; if (!e) return '';
-  const fresh = !SEEN.has(e.id);
+  const neg = e.type === 'neg', fresh = ED.ai === 0 && !SEEN.has(ED.date);
   return `<div class="stack" data-id="${e.id}">
     <p class="eyb" style="text-align:center">Adlerperspektive · ${ED.ai + 1} von ${list.length}</p>
     <div class="sky">${skySVG()}</div>
     ${ED.ai === 0 ? `<h2 style="text-align:center">Atme einmal tief durch.</h2>
-      <p class="muted" style="text-align:center">${neg ? 'Stell dir vor, du fliegst mit mir hoch über dein Leben. Von hier oben sieht vieles kleiner aus.' : 'Flieg mit mir hoch und schau dir deinen schönen Moment von oben an. Wie viel bedeutet er dir wirklich?'}</p>` : ''}
-    <div class="quote2"><small>${esc(fmtDay(e.date))}, ${e.bereich === 'beruflich' ? 'beruflich' : 'privat'} · im Moment gefühlt <b style="color:${neg ? 'var(--negink)' : 'var(--posink)'}">${sgn(e.g)}</b></small><p>${esc(e.text || 'Foto')}</p></div>
+      <p class="muted" style="text-align:center">Stell dir vor, du fliegst mit mir hoch über deinen Tag. Von hier oben sieht vieles anders aus. Lass uns jedes Erlebnis noch einmal in Ruhe betrachten.</p>` : ''}
+    <div class="quote2 ${e.type}"><span class="pill" style="align-self:flex-start">${neg ? 'Schweres' : 'Schönes'}</span><small>${esc(fmtDay(e.date))}, ${e.bereich === 'beruflich' ? 'beruflich' : 'privat'} · im Moment gefühlt <b style="color:${neg ? 'var(--negink)' : 'var(--posink)'}">${sgn(e.g)}</b></small><p>${esc(e.text || 'Foto')}</p></div>
     <div class="breath" id="breath" ${fresh ? '' : 'hidden'}><i></i>Einen Moment …</div>
     <div class="q ${fresh ? 'wait' : ''}" id="a-q"><div class="q-top"><label for="r-${e.id}">Von hier oben: Wie ${neg ? 'relevant ist das' : 'wichtig ist dieser Moment'} für dein Leben, ganzheitlich betrachtet?</label><output class="val r" id="ro-${e.id}">${e.r}</output></div>
       <input type="range" id="r-${e.id}" data-f="r" min="1" max="5" step="1" value="${e.r}" ${fresh ? 'disabled' : ''}>
       <div class="scale"><span>1 Kleinigkeit</span><span>5 sehr ${neg ? 'relevant' : 'wichtig'}</span></div></div>
-    ${neg && Math.abs(e.g) === 5 ? `${say('Das war gerade sehr intensiv. Wenn du magst, schauen wir es uns am Sonntag mit noch mehr Abstand an.', 'calm', 'neg')}
-      <div class="chips"><button class="chip" data-act="aflag" aria-pressed="${!!e.flag}">Am Sonntag nochmal ansehen</button></div>` : ''}
-    <button class="btn" data-act="anext" id="a-next" ${fresh ? 'disabled' : ''}>${ED.ai < list.length - 1 ? 'Weiter' : neg ? 'Weiter zu den schönen Momenten' : 'Tag abschließen'}</button>
+    <button class="btn" data-act="anext" id="a-next" ${fresh ? 'disabled' : ''}>${ED.ai < list.length - 1 ? 'Weiter' : 'Tag abschließen'}</button>
     <button class="btn ghost" data-act="aprev">Zurück</button>
   </div>`;
 }
 function startBreath() {
-  const e = aList()[ED.ai]; if (!e || SEEN.has(e.id)) return;
-  SEEN.add(e.id);
+  const e = aList()[ED.ai]; if (!e || ED.ai !== 0 || SEEN.has(ED.date)) return;
+  SEEN.add(ED.date);
   setTimeout(() => {
     const q = $('#a-q'); if (!q) return; q.classList.remove('wait');
     const r = $('#r-' + e.id), n = $('#a-next'), b = $('#breath');
@@ -817,14 +815,9 @@ $('#s-entry').addEventListener('click', ev => {
     if (last) { last.scrollIntoView({block:'center'}); last.querySelector('textarea')?.focus(); } return;
   }
   if (act === 'next') { prune(); save(); ED.step = b.dataset.v; return show('entry'); }
-  if (act === 'lift') {
-    prune(); save(); const type = b.dataset.v;
-    if (dayEntries(type).filter(valid).length) { ED.step = type + 'A'; ED.ai = 0; } else ED.step = type === 'neg' ? 'pos' : 'done';
-    return show('entry');
-  }
-  if (act === 'anext') { save(); ED.ai++; if (ED.ai >= aList().length) { ED.step = aType() === 'neg' ? 'pos' : 'done'; ED.ai = 0; } return show('entry'); }
-  if (act === 'aprev') { if (ED.ai > 0) ED.ai--; else ED.step = aType(); return show('entry'); }
-  if (act === 'aflag' && e) { e.flag = !e.flag; save(); b.setAttribute('aria-pressed', e.flag); return; }
+  if (act === 'lift') { prune(); save(); ED.ai = 0; ED.step = aList().length ? 'adler' : 'done'; return show('entry'); }
+  if (act === 'anext') { save(); ED.ai++; if (ED.ai >= aList().length) { ED.step = 'done'; ED.ai = 0; } return show('entry'); }
+  if (act === 'aprev') { if (ED.ai > 0) ED.ai--; else ED.step = 'pos'; return show('entry'); }
   if (act === 'nothing') { S.entries = S.entries.filter(x => !(x.date === ED.date && x.type === 'neg' && !valid(x))); S.days[ED.date] = { ...(S.days[ED.date] || {}), nothingNeg:true }; save(); ED.step = 'pos'; return show('entry'); }
   if (!e) return;
   if (act === 'del') { if (e.photoId) DB.del('photo:' + e.photoId); S.entries = S.entries.filter(x => x !== e); save(); card.remove(); return; }
@@ -857,7 +850,7 @@ $('#s-entry').addEventListener('change', async ev => {
   const e = eById(card.dataset.id); if (!e) return;
   if (f === 'newtag') {
     const name = ev.target.value.trim().replace(/\s+/g, ' ');
-    if (name) { const t = name[0].toUpperCase() + name.slice(1); if (!topicsFor('pos').includes(t) && !topicsFor('neg').includes(t)) S.topics.push(t); if (!e.tags.includes(t)) e.tags.push(t); }
+    if (name) { const t = name[0].toUpperCase() + name.slice(1); if (!topicsFor(e.type).includes(t)) S.topics.push(t); if (!e.tags.includes(t)) e.tags.push(t); }
     e.addingTag = false; delete e.addingTag; save(); $('#tc-' + e.id).innerHTML = chipsHTML(e); return;
   }
   if (f === 'g' && e.type === 'neg' && Math.abs(e.g) === 5 && !['ok','flag'].includes(e.adler)) { e.adler = 'shown'; save(); rerenderCard(e); document.getElementById('g-' + e.id)?.focus(); }
@@ -905,7 +898,7 @@ renderers.review = () => {
     return;
   }
   const week = S.entries.filter(e => e.date >= from && e.date <= to && e.date <= t && valid(e));
-  const cand = week.filter(e => Math.abs(e.g) === 5 || e.flag || e.reviewed === wk).sort((a, b) => a.date.localeCompare(b.date));
+  const cand = week.filter(e => (e.type === 'neg' && Math.abs(e.g) >= 4) || e.reviewed === wk).sort((a, b) => a.date.localeCompare(b.date));
   const open = cand.filter(e => e.reviewed !== wk);
   const e = open[0], done = cand.length - open.length;
   const feel = S.weekFeel[wk];
@@ -936,7 +929,7 @@ renderers.review = () => {
   el.innerHTML = `${topbar('Sonntags-Rückblick')}
     ${weekHead(wk, from, RI.first)}
     ${say(sunday ? `${esc(salutation())}, die Woche ist fast vorbei. Lass uns mit etwas Abstand darauf schauen.` : `${esc(salutation())}, lass uns mit etwas Abstand auf die vergangene Woche schauen.`, 'calm')}
-    ${e ? `<p class="muted small">Diese Erlebnisse hast du besonders stark bewertet. Wie siehst du sie heute, ein paar Tage später?</p>` : ''}
+    ${e ? `<p class="muted small">Diese schweren Erlebnisse hast du mit −4 oder −5 bewertet. Wie siehst du sie heute, ein paar Tage später?</p>` : ''}
     ${part}`;
   hydrate(el);
   if (e) {
@@ -1109,7 +1102,7 @@ renderers.settings = () => {
         <button class="btn sm danger" id="wipe-yes" style="align-self:flex-start">Endgültig löschen</button></div></details>
     </div>
     ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}
-    <p class="copy">Adlerblick · Version 5 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
+    <p class="copy">Adlerblick · Version 6 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
   $('#st-name').oninput = ev => { p.name = ev.target.value.trim() || p.name; save(); };
   $('#st-gender').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; p.gender = b.dataset.v; save(); $('#st-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
   $('#bk-save').onclick = async () => {
