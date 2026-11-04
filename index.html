@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Adlerblick Tagebuch · © 2026 Kevin Werner · Alle Rechte vorbehalten. Nutzung, Kopie oder Weitergabe des Codes nur mit ausdrücklicher Erlaubnis. -->
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -91,7 +92,7 @@ textarea{resize:vertical;min-height:50px;line-height:1.4;background:var(--bg);bo
 .moment .quote{font-family:var(--fd);font-size:1.25rem;line-height:1.25;font-variation-settings:"SOFT" 100}
 .moment .why{color:var(--posink);font-size:.95rem}
 .pic{display:block;width:100%;max-width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:calc(var(--rad) - 6px);background:linear-gradient(180deg,#F6B27A,#F9D7A1)}
-.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .tile{background:var(--card);border:0;border-radius:18px;padding:13px 11px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0;font-weight:800;font-size:.92rem}
 .tile i{width:28px;height:28px;border-radius:9px;display:block}
 .tile small{font-weight:400;color:var(--muted);font-size:.78rem;line-height:1.3}
@@ -189,6 +190,48 @@ input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;bac
 ol.howto{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px;font-size:.92rem}
 .tag{font-size:.72rem;background:var(--possoft);color:var(--posink);border-radius:99px;padding:2px 8px;font-weight:700}
 
+/* Version 4: PIN, Chips, Kalender, Trends */
+.dots4{display:flex;gap:18px;justify-content:center;margin:8px 0}
+.dots4 i{width:18px;height:18px;border-radius:50%;border:2px solid var(--primary);display:block}
+.dots4 i.f{background:var(--primary)}
+@media (prefers-reduced-motion:no-preference){.dots4.err{animation:shake .4s}@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;width:100%}
+.pad button{height:66px;width:66px;border-radius:50%;background:var(--card);border:0;font:500 1.6rem var(--fd);margin:0 auto;cursor:pointer;color:var(--ink)}
+.pad button.e{background:transparent;cursor:default}
+.pad button.bk{background:transparent;font:700 1.3rem var(--fb);color:var(--muted)}
+.tc{display:flex;flex-wrap:wrap;gap:7px}
+.tc button{font-size:.82rem;font-weight:800;padding:7px 12px;border-radius:99px;border:1.5px solid var(--line);color:var(--muted);background:#fff;cursor:pointer}
+.tc button.sel{background:var(--primary-soft);border-color:var(--primary);color:var(--ink)}
+.tc button.sel::before{content:"✓ ";color:var(--primary)}
+.tc button.sug{border-style:dashed;border-color:var(--primary);color:var(--ink);background:#FFF9F2}
+.tc button.sug::before{content:"✦ ";color:var(--primary)}
+.tc input{border:1.5px solid var(--primary);border-radius:99px;padding:6px 12px;font-size:16px;width:10rem}
+.qline{font-size:.8rem;font-weight:700;color:var(--muted)}
+.cal{background:var(--card);border-radius:var(--rad);padding:14px}
+.cal .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal .hd b{font:500 1.15rem var(--fd)}
+.cal .hd button{width:36px;height:36px;border-radius:50%;border:0;background:var(--bg);cursor:pointer;font-size:1.1rem;color:var(--ink)}
+.cal .hd button:disabled{opacity:.3;cursor:default}
+.cg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.cg b{font-size:.7rem;color:var(--muted)}
+.cg button{height:40px;border-radius:12px;border:0;background:transparent;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--ink);padding:0}
+.cg button.p{background:var(--pos);color:#5a3a08}.cg button.n{background:var(--neg);color:#fff}
+.cg button.s{border:1.5px dashed var(--line);color:var(--muted)}.cg button.t{box-shadow:0 0 0 2.5px var(--ink) inset}
+.cg button.f{color:var(--line);cursor:default}.cg button.on{outline:3px solid var(--primary);outline-offset:1px}
+.leg{display:flex;gap:12px;flex-wrap:wrap;font-size:.75rem;color:var(--muted)}.leg i{display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:5px;vertical-align:-2px}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg);border-radius:14px;padding:10px 12px;font-weight:700;flex-wrap:wrap}
+.wk{background:var(--card);border-radius:18px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}
+.wk b{font:500 1.15rem var(--fd);display:block}.wk small{display:block;color:var(--muted);font-size:.75rem}
+.src{display:grid;grid-template-columns:5.5rem minmax(0,1fr) 3.2rem;gap:8px;align-items:center;font-weight:700;font-size:.9rem}
+.src .t{height:12px;border-radius:8px;background:var(--bg);overflow:hidden}.src .t i{display:block;height:100%;border-radius:8px}
+.src small{font-weight:400;color:var(--muted);font-size:.75rem;display:block}
+.src b{text-align:right;font:500 1rem var(--fd);font-variant-numeric:tabular-nums}
+.insight{background:var(--card);border-radius:14px;padding:12px 14px;font-size:.92rem;line-height:1.4}
+.insight.good{background:var(--possoft);color:var(--posink)}
+.words{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.words span{font-family:var(--fd);color:var(--posink);line-height:1.2}
+.copy{font-size:.75rem;color:var(--muted);text-align:center}
+
 /* Export */
 .datebar{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:99px;padding:6px;font-weight:800}
 .datebar .a{width:38px;height:38px;border-radius:50%;background:var(--bg);border:0;cursor:pointer;font-size:1.1rem;color:var(--ink)}
@@ -261,31 +304,29 @@ body{margin:0}
         <div class="seg" role="group" aria-labelledby="su-g-l" id="su-gender" style="background:var(--card)">
           <button type="button" data-v="m" aria-pressed="true">männlich</button><button type="button" data-v="w" aria-pressed="false">weiblich</button><button type="button" data-v="d" aria-pressed="false">divers</button>
         </div></div>
-      <div class="field"><label for="su-user">Username</label><input class="inp" id="su-user" autocomplete="username" autocapitalize="none"></div>
-      <div class="field"><label for="su-pw">Passwort (mind. 6 Zeichen)</label><input class="inp" id="su-pw" type="password" autocomplete="new-password"></div>
-      <div class="field"><label for="su-pw2">Passwort wiederholen</label><input class="inp" id="su-pw2" type="password" autocomplete="new-password"></div>
       <p class="hint">Alles bleibt nur auf deinem iPhone und ist verschlüsselt. Niemand sonst kann es lesen.</p>
       <p id="su-err" class="error" hidden></p>
       <button class="btn" type="submit">Weiter</button>
     </form>
     <div id="demo-box" class="stack-s" hidden>
-      <p class="small muted">Nur für den Test: legt einen Zugang mit acht Wochen Beispieleinträgen an (Username <b>test</b>, Passwort <b>test123</b>).</p>
+      <p class="small muted">Nur für den Test: legt einen Zugang mit acht Wochen Beispieleinträgen an (PIN <b>1234</b>).</p>
       <button id="su-demo" class="btn ghost" type="button">Mit Beispieldaten ausprobieren</button>
     </div>
   </section>
 
   <section id="s-code" class="screen stack" hidden>
-    <div class="bubble" style="margin-top:12px"><span data-eagle="s"></span><p class="say">Ganz wichtig: Mit diesem Code kommst du wieder rein, falls du dein Passwort vergisst.</p></div>
+    <div class="bubble" style="margin-top:12px"><span data-eagle="s"></span><p class="say">Ganz wichtig: Mit diesem Code kommst du wieder rein, falls du deine PIN vergisst.</p></div>
     <h2>Dein Wiederherstellungscode</h2>
     <div id="code-box" class="code"></div>
     <button id="code-copy" class="btn ghost" type="button">Code kopieren</button>
-    <p class="muted">Schreib ihn auf einen Zettel oder speichere ihn an einem sicheren Ort. Ohne ihn kann niemand dein Tagebuch öffnen, auch du nicht.</p>
+    <p class="muted">Schreib ihn auf einen Zettel oder speichere ihn an einem sicheren Ort. Du brauchst ihn, wenn du deine PIN vergisst oder eine Sicherung auf einem neuen iPhone öffnest.</p>
     <label class="check"><input type="checkbox" id="code-ok"><span>Ich habe mir den Code notiert.</span></label>
     <button id="code-go" class="btn" type="button" disabled>Los geht's</button>
   </section>
 
   <section id="s-login" class="screen stack" hidden>
-    <div class="stack-s center" style="display:flex;margin-top:24px"><span data-eagle="l" data-mood="calm"></span><h1>Schön, dass du wieder da bist.</h1></div>
+    <div class="stack-s center" style="display:flex;margin-top:24px"><span data-eagle="l" data-mood="calm"></span><h1>Schön, dass du wieder da bist.</h1>
+      <p class="muted">Einmalig: Melde dich noch mit Username und Passwort an. Danach öffnest du dein Tagebuch einfach mit einer PIN.</p></div>
     <form id="login-form" class="stack" novalidate>
       <div class="field"><label for="li-user">Username</label><input class="inp" id="li-user" autocomplete="username" autocapitalize="none"></div>
       <div class="field"><label for="li-pw">Passwort</label><input class="inp" id="li-pw" type="password" autocomplete="current-password"></div>
@@ -296,17 +337,17 @@ body{margin:0}
   </section>
 
   <section id="s-recover" class="screen stack" hidden>
-    <div class="topbar"><button class="back" data-go="login">← Zurück</button></div>
-    <h2>Neues Passwort festlegen</h2>
-    <p class="muted">Gib deinen Wiederherstellungscode ein. Danach legst du ein neues Passwort fest.</p>
+    <div class="topbar"><button class="back" id="rc-back">← Zurück</button></div>
+    <h2>Mit Wiederherstellungscode öffnen</h2>
+    <p class="muted">Gib deinen Wiederherstellungscode ein. Danach legst du eine neue PIN fest.</p>
     <form id="rec-form" class="stack" novalidate>
-      <div class="field"><label for="rc-code">Wiederherstellungscode</label><input class="inp" id="rc-code" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
-      <div class="field"><label for="rc-user">Username</label><input class="inp" id="rc-user" autocapitalize="none"></div>
-      <div class="field"><label for="rc-pw">Neues Passwort (mind. 6 Zeichen)</label><input class="inp" id="rc-pw" type="password" autocomplete="new-password"></div>
+      <div class="field"><label for="rc-code">Wiederherstellungscode</label><input class="inp" id="rc-code" autocapitalize="characters" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
       <p id="rc-err" class="error" hidden></p>
-      <button class="btn" type="submit">Passwort speichern</button>
+      <button class="btn" type="submit">Weiter</button>
     </form>
   </section>
+  <section id="s-pin" class="screen stack" hidden></section>
+  <section id="s-pinsetup" class="screen stack" hidden></section>
 
   <section id="s-home" class="screen stack" hidden></section>
   <section id="s-entry" class="screen stack" hidden></section>
@@ -315,6 +356,8 @@ body{margin:0}
   <section id="s-stats" class="screen stack" hidden></section>
   <section id="s-settings" class="screen stack" hidden></section>
   <section id="s-export" class="screen stack" hidden></section>
+  <section id="s-calendar" class="screen stack" hidden></section>
+  <section id="s-trends" class="screen stack" hidden></section>
 </div>
 <div id="pdf-stage" aria-hidden="true"></div>
 <div id="celebrate" class="celebrate" hidden></div>
@@ -409,29 +452,41 @@ const photoURL = new Map();
 const freshState = (name, gender) => ({ v:2, profile:{ name, gender, created: today() }, days:{}, entries:[], weekFeel:{}, lastBackupMonth:null, backupSnooze:null, lastReview:null, photoTipLast:null });
 async function persist() { if (KEY && S) await DB.put('data', await encB(KEY, te.encode(JSON.stringify(S)))); }
 function save(now) { clearTimeout(saveT); if (now) return persist(); saveT = setTimeout(persist, 250); }
-async function createAccount(name, gender, user, pw) {
-  const raw = rnd(32), code = makeCode(), saltPw = rnd(16), saltRc = rnd(16);
-  const [kPw, kRc] = await Promise.all([derive(pwSecret(user, pw), saltPw), derive(normCode(code), saltRc)]);
-  META = { v:1, saltPw, saltRc, wPw: await encB(kPw, raw), wRc: await encB(kRc, raw) };
-  await DB.clear(); await DB.put('meta', META);
-  KEY = await importDataKey(raw); S = freshState(name, gender); await save(true);
+let RAW = null, FLOW = null;
+async function createAccount(name, gender) {
+  RAW = rnd(32); const code = makeCode(), saltRc = rnd(16);
+  META = { v:2, mode:'none', saltRc, wRc: await encB(await derive(normCode(code), saltRc), RAW) };
+  await DB.clear(); KEY = await importDataKey(RAW); S = freshState(name, gender); migrateState();
+  await setPin(null); await save(true);
   return code;
 }
-async function unlock(user, pw) {
-  const raw = await decB(await derive(pwSecret(user, pw), META.saltPw), META.wPw);
-  KEY = await importDataKey(raw);
-  S = JSON.parse(td.decode(await decB(KEY, await DB.get('data'))));
-  S.weekFeel ||= {}; S.days ||= {}; S.entries ||= [];
+async function setPin(pin) {
+  META.v = 2;
+  if (pin) { const salt = rnd(16); META.mode = 'pin'; META.saltPw = salt; META.wPw = await encB(await derive('pin:' + pin, salt), RAW); delete META.raw; }
+  else { META.mode = 'none'; META.raw = RAW; delete META.saltPw; delete META.wPw; }
+  await DB.put('meta', META);
 }
-async function rewrap(raw, user, pw) {
-  const saltPw = rnd(16); META.saltPw = saltPw; META.wPw = await encB(await derive(pwSecret(user, pw), saltPw), raw); await DB.put('meta', META);
+function migrateState() {
+  S.weekFeel ||= {}; S.days ||= {}; S.entries ||= []; S.reviewsDone ||= {}; S.topics ||= []; S.learn ||= {};
+  if (S.lastReview) { S.reviewsDone[S.lastReview] = true; delete S.lastReview; }
+  S.entries.forEach(e => { e.tags ||= []; });
 }
-async function recover(code, user, pw) { await rewrap(await decB(await derive(normCode(code), META.saltRc), META.wRc), user, pw); }
-async function changePw(oldUser, oldPw, newPw) { await rewrap(await decB(await derive(pwSecret(oldUser, oldPw), META.saltPw), META.wPw), oldUser, newPw); }
+async function openWith(raw) { RAW = raw; KEY = await importDataKey(raw); S = JSON.parse(td.decode(await decB(KEY, await DB.get('data')))); migrateState(); }
+async function unlockPin(pin) { await openWith(await decB(await derive('pin:' + pin, META.saltPw), META.wPw)); }
+async function unlockLegacy(user, pw) { await openWith(await decB(await derive(pwSecret(user, pw), META.saltPw), META.wPw)); }
+async function unlockCode(code) { RAW = await decB(await derive(normCode(code), META.saltRc), META.wRc); }
+async function route() {
+  if (!META) return show('setup');
+  if (!META.mode) return show('login');
+  if (META.mode === 'none' && META.raw) { await openWith(META.raw); return show('home'); }
+  if (META.mode === 'none') return show('recover');
+  show('pin');
+}
 function lock() {
-  clearTimeout(saveT); KEY = null; S = null;
+  if (!META || META.mode !== 'pin') return;
+  clearTimeout(saveT); KEY = null; S = null; RAW = null;
   photoURL.forEach(u => URL.revokeObjectURL(u)); photoURL.clear();
-  $('#li-pw').value = ''; show('login');
+  show('pin');
 }
 
 /* ---------- Fotos ---------- */
@@ -470,7 +525,7 @@ function summarize(list) {
 const HELP = 'Schaue regelmäßig in deine guten Gedanken und freue dich über diese Erlebnisse. Es ist wichtig, auch die schönen Momente wertzuschätzen und diese nicht so schnell zu vergessen. Sprich sowohl über Gutes als auch über Schlechtes mit deinen vertrauten Personen. Deine Einträge hier helfen dabei, deine Gedanken und Erlebnisse zu ordnen.';
 
 /* ---------- Navigation ---------- */
-const screens = ['setup','code','login','recover','home','entry','thoughts','review','stats','settings','export'];
+const screens = ['setup','code','login','recover','pin','pinsetup','home','entry','thoughts','review','stats','settings','export','calendar','trends'];
 const renderers = {};
 function show(name) {
   screens.forEach(s => { $('#s-' + s).hidden = s !== name; });
@@ -502,7 +557,8 @@ renderers.home = () => {
   }
   const m = pos.find(p => p.id === momentPick);
   const todayHas = S.entries.some(e => e.date === t && valid(e));
-  const wk = weekKey(t), isSunday = new Date().getDay() === 0;
+  const rw = reviewWeek(), isSunday = new Date().getDay() === 0, missing = missingDays();
+  const reviewOpen = !S.reviewsDone[rw] && (isSunday || S.entries.some(e => valid(e) && e.date >= rw && e.date <= addDays(rw, 6)));
   const needBackup = S.lastBackupMonth !== month && S.backupSnooze !== month && S.profile.created.slice(0, 7) !== month;
   const isDemo = S.entries.some(e => e.demo);
   const days = [...new Set(S.entries.filter(valid).map(e => e.date))].sort().reverse().slice(0, 5);
@@ -510,7 +566,9 @@ renderers.home = () => {
     <div class="topbar"><span></span><button class="link" data-go="settings">Einstellungen</button></div>
     <div class="greet">${eagle('m')}<p class="muted" style="padding-bottom:6px">${esc(fmtLong(t))}${isDemo ? ' <span class="tag">Beispieldaten</span>' : ''}</p></div>
     <h1>Willkommen ${esc(S.profile.name)},<br>wie war dein Tag heute?</h1>
-    ${isSunday && S.lastReview !== wk ? `<button class="banner" data-go="review" style="border:0;text-align:left;cursor:pointer">${eagle('s','calm')}<span><b>Es ist Sonntag.</b><span class="small muted">Schau mit etwas Abstand auf deine Woche zurück.</span></span></button>` : ''}
+    ${missing.length ? `<div class="card">${say('Kein Problem, wenn mal ein Tag fehlt. Möchtest du diese Tage noch nachholen?', 'calm')}
+      ${missing.map(d => `<div class="mrow"><span>${esc(fmtLong(d))}</span><span class="row" style="gap:6px"><button class="btn sm" data-go="entry" data-date="${d}">Nachholen</button><button class="btn sm ghost" data-skip="${d}">Überspringen</button></span></div>`).join('')}</div>` : ''}
+    ${reviewOpen ? `<button class="banner" data-go="review" style="border:0;text-align:left;cursor:pointer">${eagle('s','calm')}<span><b>${isSunday ? 'Es ist Sonntag.' : 'Dein Wochenrückblick ist noch offen.'}</b><span class="small muted">${isSunday ? 'Schau mit etwas Abstand auf deine Woche zurück.' : `Woche ${esc(fmtShort(rw))} – ${esc(fmtShort(addDays(rw, 6)))}`}</span></span></button>` : ''}
     ${needBackup ? `<div class="banner">${eagle('s')}<div class="stack-s" style="flex:1"><b>Neuer Monat, Zeit für deine Sicherung.</b><div class="row"><button class="btn sm" data-go="settings">Sicherung speichern</button><button class="btn sm ghost" id="snooze">Später</button></div></div></div>` : ''}
     <button class="btn" data-go="entry" data-date="${t}">${todayHas ? 'Heutigen Tag ergänzen' : 'Tag eintragen'}</button>
     ${m ? `<div class="moment"><span class="eyb">Weißt du noch? · ${esc(fmtShort(m.date))}</span>
@@ -521,6 +579,7 @@ renderers.home = () => {
       <button class="tile" data-go="thoughts"><i style="background:var(--pos)"></i>Gute Gedanken<small>Schönste Momente</small></button>
       <button class="tile" data-go="review"><i style="background:var(--neg)"></i>Rückblick<small>Mit Abstand</small></button>
       <button class="tile" data-go="stats"><i style="background:var(--primary)"></i>Auswertung<small>Gefühlt und gewichtet</small></button>
+      <button class="tile" data-go="calendar"><i style="background:var(--ink)"></i>Kalender<small>Alle Tage im Überblick</small></button>
     </div>
     ${days.length ? `<h3>Deine letzten Tage</h3><div class="days">${days.map(d => {
       const l = S.entries.filter(e => e.date === d && valid(e)), n = l.filter(e => e.type === 'neg').length;
@@ -528,13 +587,67 @@ renderers.home = () => {
     }).join('')}</div>` : ''}`;
   hydrate(el);
   const sn = $('#snooze', el); if (sn) sn.onclick = () => { S.backupSnooze = month; save(); renderers.home(); };
+  el.querySelectorAll('[data-skip]').forEach(b => b.onclick = () => { const d = b.dataset.skip; S.days[d] = { ...(S.days[d] || {}), skip:true }; save(); renderers.home(); });
 };
+function missingDays() {
+  const t = today(), start = [S.profile.created, addDays(t, -7)].sort()[1], out = [];
+  for (let d = start; d < t; d = addDays(d, 1)) {
+    const dd = S.days[d] || {};
+    if (!dd.done && !dd.skip && !S.entries.some(e => e.date === d && valid(e))) out.push(d);
+  }
+  return out;
+}
+function reviewWeek() { const t = today(), cur = weekKey(t); return new Date().getDay() === 0 ? cur : addDays(cur, -7); }
+function nextSunday() { const d = new Date().getDay(); return addDays(today(), d === 0 ? 7 : 7 - d); }
+function isoWeek(s) { const d = parseD(s); d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7)); const w1 = new Date(d.getFullYear(), 0, 4); return 1 + Math.round(((d - w1) / 864e5 - 3 + ((w1.getDay() + 6) % 7)) / 7); }
+const weekHead = wk => `<div class="wk"><span><small>Deine Woche</small><b>${esc(fmtShort(wk))} – ${esc(fmtShort(addDays(wk, 6)))}</b></span><span class="tag">KW ${isoWeek(wk)}</span></div>`;
+
+/* ---------- Themen (Chips): Wörterbuch, lokal, ohne Internet ---------- */
+const POS_T = ['Sport','Natur','Familie','Freunde','Ruhe','Kultur','Essen','Arbeit'];
+const NEG_T = ['Arbeit','Familie','Gesundheit','Geld','Reisen','Haushalt'];
+const DICT = {
+  Sport:['sport','lauf','jogg','fitness','gym','training','trainier','golf','schwimm','fahrrad','radtour','yoga','tennis','fußball','fussball','wander','ski','workout','bewegung'],
+  Natur:['wald','see','berg','natur','sonne','spazier','garten','strand','meer','park','blume','wiese','fluss','sonnenuntergang','draußen','frische luft'],
+  Familie:['familie','kind','sohn','tochter','mama','papa','mutter','vater','eltern','oma','opa','schwester','bruder','frau','mann','partner','enkel','tante','onkel'],
+  Freunde:['freund','kumpel','party','feier','geburtstag','besuch','stammtisch','clique'],
+  Ruhe:['ruhe','ausgeschlafen','entspann','badewanne','lesen','buch','meditat','kaffee','couch','sofa','balkon','pause','auszeit','wellness','sauna'],
+  Kultur:['kino','film','konzert','musik','theater','museum','serie','ausstellung','festival','oper'],
+  Essen:['essen','abendessen','frühstück','mittagessen','restaurant','koch','rezept','pizza','kuchen','grill','lecker','café','cafe','eis'],
+  Arbeit:['arbeit','meeting','chef','kunde','büro','projekt','kolleg','präsentation','mail','termin','job','team','vertrag','deadline','besprechung','firma'],
+  Gesundheit:['krank','arzt','schmerz','kopfweh','kopfschmerz','rücken','erkält','müde','schlecht geschlafen','schlaf','fieber','verletz'],
+  Geld:['geld','rechnung','kosten','teuer','steuer','bank','zahlung','mahnung','gehalt','konto'],
+  Reisen:['zug','bahn','flug','flughafen','hotel','reise','stau','verspätung','dienstreise','auto','koffer','taxi'],
+  Haushalt:['haushalt','putz','wasch','einkauf','paket','handwerker','reparatur','aufräum','müll','nachbar','kaputt','ausgelaufen']
+};
+const STOP = new Set('und oder aber der die das den dem des ein eine einer einem einen mit mich mir mein meine meinem meinen dich dir dein deine sich ich du er sie es wir ihr war waren ist sind hat hatte habe haben wird wurde nicht kein keine noch schon sehr ganz auch nur mal dann denn doch als wie bei beim von vom zum zur für auf aus nach vor über unter durch gegen ohne heute gestern morgen wieder endlich richtig einfach etwas viel viele mehr alle alles immer gut schön toll mega super lange kurz neuen neue neues einen am im in an zu so da hier'.split(' '));
+const words = txt => (txt || '').toLowerCase().split(/[^a-zäöüß]+/).filter(w => w.length >= 3 && !STOP.has(w));
+function topicsFor(type) { const base = type === 'neg' ? NEG_T : POS_T; return [...base, ...S.topics.filter(t => !base.includes(t))]; }
+function suggestAll(e) {
+  const txt = ((e.text || '') + ' ' + (e.why || '')).toLowerCase(), ws = words(txt), out = new Set();
+  for (const t of topicsFor(e.type)) {
+    const stems = DICT[t] || [t.toLowerCase()];
+    if (stems.some(s => s.includes(' ') ? txt.includes(s) : ws.some(w => w.startsWith(s)))) out.add(t);
+  }
+  ws.forEach(w => { const t = S.learn[w]; if (t && topicsFor(e.type).includes(t)) out.add(t); });
+  return [...out];
+}
+const tagsOf = e => (e.tags && e.tags.length) ? e.tags : suggestAll(e);
+function learnFrom(e, tag) {
+  const all = Object.values(DICT).flat();
+  words((e.text || '') + ' ' + (e.why || '')).forEach(w => { if (!all.some(s => w.startsWith(s))) S.learn[w] = tag; });
+  const keys = Object.keys(S.learn); if (keys.length > 600) keys.slice(0, keys.length - 600).forEach(k => delete S.learn[k]);
+}
+function chipsHTML(e) {
+  const sug = suggestAll(e);
+  return topicsFor(e.type).map(t => `<button type="button" data-act="tag" data-v="${esc(t)}" class="${e.tags.includes(t) ? 'sel' : sug.includes(t) ? 'sug' : ''}" aria-pressed="${e.tags.includes(t)}">${esc(t)}</button>`).join('')
+    + (e.addingTag ? `<input data-f="newtag" placeholder="Neues Thema" maxlength="20" aria-label="Neues Thema">` : `<button type="button" data-act="addtag">+ Eigenes</button>`);
+}
 
 /* ---------- Tag eintragen ---------- */
 const ED = { date: today(), step: 'ort' };
 const dayEntries = type => S.entries.filter(e => e.date === ED.date && e.type === type);
 function newEntry(type) {
-  const e = { id: uid(), date: ED.date, type, text: '', why: '', bereich: S.days[ED.date]?.ort === 'work' ? 'beruflich' : 'privat', g: type === 'neg' ? -3 : 3, r: 3, created: Date.now() };
+  const e = { id: uid(), date: ED.date, type, text: '', why: '', tags: [], bereich: S.days[ED.date]?.ort === 'work' ? 'beruflich' : 'privat', g: type === 'neg' ? -3 : 3, r: 3, created: Date.now() };
   S.entries.push(e); return e;
 }
 function prune() {
@@ -558,6 +671,7 @@ function entryCard(e) {
       ${e.photoId ? `<div class="thumb"><img class="pic" data-photo="${e.photoId}" alt="Foto zu diesem Moment"><button class="chip" data-act="rmphoto">Foto entfernen</button></div>` : ''}
       <label class="btn ghost sm" for="f-${e.id}" style="align-self:flex-start">${e.photoId ? 'Anderes Foto wählen' : 'Foto hinzufügen'}</label>
       <input type="file" id="f-${e.id}" class="sr" accept="image/*" data-f="photo">` : ''}
+    <div class="stack-s"><span class="qline">Worum ging es?</span><div class="tc" id="tc-${e.id}">${chipsHTML(e)}</div></div>
     <div class="seg" role="group" aria-label="Bereich">
       <button type="button" data-act="bereich" data-v="privat" aria-pressed="${e.bereich === 'privat'}">Privat</button>
       <button type="button" data-act="bereich" data-v="beruflich" aria-pressed="${e.bereich === 'beruflich'}">Beruflich</button>
@@ -594,7 +708,7 @@ renderers.entry = () => {
       ? `<button class="btn" data-act="next" data-v="pos">Weiter zu den schönen Momenten</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
       : `<button class="btn" data-act="next" data-v="done">Tag abschließen</button>`;
   } else {
-    prune(); save();
+    prune(); S.days[ED.date] = { ...(S.days[ED.date] || {}), done:true, skip:false }; save();
     const l = S.entries.filter(e => e.date === ED.date && valid(e));
     const pos = l.filter(e => e.type === 'pos').sort((a, b) => weight(b) - weight(a)), n = l.length - pos.length;
     body = `<div class="stack-s center" style="display:flex">${eagle('l', 'happy', 'hop')}
@@ -632,6 +746,13 @@ $('#s-entry').addEventListener('click', ev => {
   if (!e) return;
   if (act === 'del') { if (e.photoId) DB.del('photo:' + e.photoId); S.entries = S.entries.filter(x => x !== e); save(); card.remove(); return; }
   if (act === 'bereich') { e.bereich = b.dataset.v; save(); card.querySelectorAll('[data-act=bereich]').forEach(x => x.setAttribute('aria-pressed', x === b)); return; }
+  if (act === 'tag') {
+    const t = b.dataset.v;
+    if (e.tags.includes(t)) e.tags = e.tags.filter(x => x !== t);
+    else { if (!suggestAll(e).includes(t)) learnFrom(e, t); e.tags.push(t); }
+    save(); $('#tc-' + e.id).innerHTML = chipsHTML(e); return;
+  }
+  if (act === 'addtag') { e.addingTag = true; $('#tc-' + e.id).innerHTML = chipsHTML(e); $('#tc-' + e.id + ' input')?.focus(); return; }
   if (act === 'adler-ok') e.adler = 'ok';
   if (act === 'adler-flag') { e.adler = 'flag'; e.flag = true; }
   if (act === 'adler-adjust') e.adler = 'adjust';
@@ -642,7 +763,8 @@ $('#s-entry').addEventListener('click', ev => {
 $('#s-entry').addEventListener('input', ev => {
   const f = ev.target.dataset.f, card = ev.target.closest('[data-id]'); if (!f || !card) return;
   const e = eById(card.dataset.id); if (!e) return;
-  if (f === 'text' || f === 'why') e[f] = ev.target.value;
+  if (f === 'text' || f === 'why') { e[f] = ev.target.value; const tc = $('#tc-' + e.id); if (tc && !e.addingTag) tc.innerHTML = chipsHTML(e); }
+  if (f === 'newtag') return;
   if (f === 'g') { const v = +ev.target.value; e.g = e.type === 'neg' ? -v : v; $('#go-' + e.id).textContent = sgn(e.g); }
   if (f === 'r') { e.r = +ev.target.value; $('#ro-' + e.id).textContent = e.r; }
   save();
@@ -650,12 +772,19 @@ $('#s-entry').addEventListener('input', ev => {
 $('#s-entry').addEventListener('change', async ev => {
   const f = ev.target.dataset.f, card = ev.target.closest('[data-id]'); if (!f || !card) return;
   const e = eById(card.dataset.id); if (!e) return;
+  if (f === 'newtag') {
+    const name = ev.target.value.trim().replace(/\s+/g, ' ');
+    if (name) { const t = name[0].toUpperCase() + name.slice(1); if (!topicsFor('pos').includes(t) && !topicsFor('neg').includes(t)) S.topics.push(t); if (!e.tags.includes(t)) e.tags.push(t); }
+    e.addingTag = false; delete e.addingTag; save(); $('#tc-' + e.id).innerHTML = chipsHTML(e); return;
+  }
   if (f === 'g' && e.type === 'neg' && Math.abs(e.g) === 5 && !['ok','flag'].includes(e.adler)) { e.adler = 'shown'; save(); rerenderCard(e); document.getElementById('g-' + e.id)?.focus(); }
   if (f === 'photo' && ev.target.files[0]) {
     try { const old = e.photoId; e.photoId = await storePhoto(ev.target.files[0]); if (old) DB.del('photo:' + old); save(); rerenderCard(e); }
     catch { const p = document.createElement('p'); p.className = 'error'; p.textContent = 'Das Foto konnte nicht geladen werden. Versuch es mit einem anderen Bild.'; card.appendChild(p); }
   }
 });
+
+$('#s-entry').addEventListener('keydown', ev => { if (ev.target.dataset.f === 'newtag' && ev.key === 'Enter') { ev.preventDefault(); ev.target.blur(); } });
 
 /* ---------- Gute Gedanken ---------- */
 const TH = { i: 0 };
@@ -682,8 +811,12 @@ renderers.thoughts = () => {
 
 /* ---------- Sonntags-Rückblick ---------- */
 renderers.review = () => {
-  const el = $('#s-review'), t = today(), from = addDays(t, -6), wk = weekKey(t);
-  const week = S.entries.filter(e => e.date >= from && e.date <= t && valid(e));
+  const el = $('#s-review'), t = today(), wk = reviewWeek(), from = wk, to = addDays(wk, 6), sunday = new Date().getDay() === 0;
+  if (S.reviewsDone[wk]) {
+    el.innerHTML = `${topbar('Sonntags-Rückblick')}${weekHead(wk)}${say(`Diese Woche hast du schon abgeschlossen. Dein nächster Rückblick ist am ${esc(fmtLong(nextSunday()))}.`)}<button class="btn ghost" data-go="stats">Zur Auswertung</button>`;
+    return;
+  }
+  const week = S.entries.filter(e => e.date >= from && e.date <= to && e.date <= t && valid(e));
   const cand = week.filter(e => Math.abs(e.g) === 5 || e.flag || e.reviewed === wk).sort((a, b) => a.date.localeCompare(b.date));
   const open = cand.filter(e => e.reviewed !== wk);
   const e = open[0], done = cand.length - open.length;
@@ -713,7 +846,8 @@ renderers.review = () => {
       <button class="btn" id="rv-done">Rückblick abschließen</button>`;
   }
   el.innerHTML = `${topbar('Sonntags-Rückblick')}
-    ${say(`${esc(salutation())}, lass uns mit etwas Abstand auf deine Woche schauen.`, 'calm')}
+    ${weekHead(wk)}
+    ${say(sunday ? `${esc(salutation())}, die Woche ist fast vorbei. Lass uns mit etwas Abstand darauf schauen.` : `${esc(salutation())}, lass uns mit etwas Abstand auf die vergangene Woche schauen.`, 'calm')}
     ${e ? `<p class="muted small">Diese Erlebnisse hast du besonders stark bewertet. Wie siehst du sie heute, ein paar Tage später?</p>` : ''}
     ${part}`;
   hydrate(el);
@@ -736,7 +870,7 @@ renderers.review = () => {
     fe.addEventListener('input', () => { S.weekFeel[wk] = +fe.value; $('#feel-o').textContent = sgn(+fe.value); save();
       const best = week.filter(x => x.type === 'pos').sort((a, b) => weight(b) - weight(a))[0];
       $('#weekcard').innerHTML = weekCard(summarize(week), S.weekFeel[wk], best, week.length); hydrate($('#weekcard')); });
-    $('#rv-done').onclick = () => { S.lastReview = wk; save(); show('home'); };
+    $('#rv-done').onclick = () => { S.reviewsDone[wk] = true; save(); show('home'); };
   }
 };
 function weekCard(sm, feel, best, n) {
@@ -792,6 +926,7 @@ renderers.stats = () => {
   const mn = Math.max(sm.nNeg, sm.nPos), mw = Math.max(sm.wNeg, sm.wPos);
   el.innerHTML = `${topbar('Auswertung')}
     <div class="row" style="justify-content:space-between"><h2>Gefühlt und gewichtet</h2><button class="btn sm ghost" data-go="export">Als PDF teilen</button></div>
+    <button class="banner" data-go="trends" style="border:0;text-align:left;cursor:pointer;width:100%">${eagle('s')}<span><b>Deine Kraftquellen</b><span class="small muted">Was dir guttut und was dich belastet</span></span></button>
     <div class="stack-s">
       <div class="chips" role="group" aria-label="Zeitraum">${chip('range','7','7 Tage')}${chip('range','30','30 Tage')}${chip('range','90','3 Monate')}${chip('range','180','6 Monate')}${chip('range','all','Alles')}</div>
       <div class="chips" role="group" aria-label="Bereich">${chip('bereich','alle','Alle')}${chip('bereich','privat','Privat')}${chip('bereich','beruflich','Beruflich')}</div>
@@ -843,6 +978,7 @@ const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
 async function exportBackup() {
   await persist(); const out = {};
   for (const k of await DB.keys()) out[k] = await DB.get(k);
+  out.meta = { v:2, mode:'none', saltRc: META.saltRc, wRc: META.wRc };
   return new Blob([JSON.stringify({ app:'adlerblick', v:1, created: new Date().toISOString(), store: out }, (k, v) => v instanceof Uint8Array ? { __b64: b64(v) } : v)], { type:'application/json' });
 }
 async function importBackup(file) {
@@ -869,24 +1005,23 @@ renderers.settings = () => {
         <p id="bk-err" class="error" hidden></p></div></details>
       <details><summary><span>Tägliche Erinnerung<small>Anleitung für Kurzbefehle</small></span></summary><div class="inner">
         <ol class="howto"><li>Kurzbefehle öffnen, unten <b>Automation</b> wählen, dann <b>+</b>.</li><li><b>Tageszeit</b> wählen, z. B. 20 Uhr, täglich.</li><li><b>Sofort ausführen</b> einstellen.</li><li>Aktion <b>App öffnen</b> wählen: <b>Adlerblick</b>.</li><li>Für den Rückblick eine zweite Automation sonntags anlegen.</li></ol></div></details>
-      <details><summary><span>Passwort ändern</span></summary><div class="inner">
-        <div class="field"><label for="pw-user">Username</label><input class="inp" id="pw-user" autocapitalize="none" autocomplete="username"></div>
-        <div class="field"><label for="pw-old">Aktuelles Passwort</label><input class="inp" id="pw-old" type="password" autocomplete="current-password"></div>
-        <div class="field"><label for="pw-new">Neues Passwort (mind. 6 Zeichen)</label><input class="inp" id="pw-new" type="password" autocomplete="new-password"></div>
-        <button class="btn sm" id="pw-save" style="align-self:flex-start">Passwort ändern</button><p id="pw-msg" class="small" hidden></p></div></details>
+      <details><summary><span>PIN<small>${META.mode === 'pin' ? 'Aktiv' : 'Aus'}</small></span></summary><div class="inner">
+        <p class="small muted">${META.mode === 'pin' ? 'Dein Tagebuch öffnet sich mit deiner 4-stelligen PIN.' : 'Dein Tagebuch öffnet sich direkt, geschützt nur durch die Sperre deines iPhones.'}</p>
+        <button class="btn sm" id="pin-change" style="align-self:flex-start">${META.mode === 'pin' ? 'PIN ändern oder ausschalten' : 'PIN einrichten'}</button></div></details>
       <details><summary><span>Wenn es mal sehr schwer ist</span></summary><div class="inner">
         <p class="small">Du musst nicht alles allein tragen. Die Telefonseelsorge ist rund um die Uhr für dich da, kostenlos und anonym:</p>
         <p style="font-weight:800;font-size:1.15rem;user-select:all">0800 111 0 111</p><p style="font-weight:800;font-size:1.15rem;user-select:all">0800 111 0 222</p>
         <p class="small muted">Im Notfall wähle die 112.</p></div></details>
     </div>
     <div class="list">
-      <details><summary><span>Tagebuch sperren<small>Nach 5 Minuten im Hintergrund sperrt es sich automatisch.</small></span></summary><div class="inner"><button class="btn sm" id="lock-btn" style="align-self:flex-start">Jetzt sperren</button></div></details>
+      ${META.mode === 'pin' ? `<details><summary><span>Tagebuch sperren<small>Nach 5 Minuten im Hintergrund sperrt es sich automatisch.</small></span></summary><div class="inner"><button class="btn sm" id="lock-btn" style="align-self:flex-start">Jetzt sperren</button></div></details>` : ''}
       ${inFrame || isDemo || location.protocol === 'file:' ? `<details><summary><span>Beispieldaten<small>Nur zum Testen</small></span></summary><div class="inner">${isDemo ? '<button class="btn sm ghost" id="demo-rm" style="align-self:flex-start">Beispieldaten entfernen</button>' : '<button class="btn sm ghost" id="demo-add" style="align-self:flex-start">Beispieldaten laden</button>'}</div></details>` : ''}
       <details><summary><span style="color:var(--danger)">Alles löschen</span></summary><div class="inner">
         <p class="small">Wirklich alles löschen? Dein Tagebuch, alle Fotos und dein Zugang sind danach weg. Das lässt sich nicht rückgängig machen.</p>
         <button class="btn sm danger" id="wipe-yes" style="align-self:flex-start">Endgültig löschen</button></div></details>
     </div>
-    ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}`;
+    ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}
+    <p class="copy">Adlerblick · Version 4 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
   $('#st-name').oninput = ev => { p.name = ev.target.value.trim() || p.name; save(); };
   $('#st-gender').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; p.gender = b.dataset.v; save(); $('#st-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
   $('#bk-save').onclick = async () => {
@@ -898,14 +1033,9 @@ renderers.settings = () => {
   let pending = null;
   $('#bk-file').onchange = ev => { pending = ev.target.files[0]; $('#bk-confirm').hidden = !pending; };
   $('#bk-no').onclick = () => { pending = null; $('#bk-confirm').hidden = true; $('#bk-file').value = ''; };
-  $('#bk-yes').onclick = async () => { try { await importBackup(pending); lock(); } catch { const e = $('#bk-err'); e.hidden = false; e.textContent = 'Diese Datei ist keine gültige Adlerblick-Sicherung.'; $('#bk-confirm').hidden = true; } };
-  $('#pw-save').onclick = async () => {
-    const m = $('#pw-msg'), np = $('#pw-new').value; m.hidden = false; m.className = 'small';
-    if (np.length < 6) { m.className = 'error'; m.textContent = 'Das neue Passwort braucht mindestens 6 Zeichen.'; return; }
-    try { await changePw($('#pw-user').value, $('#pw-old').value, np); m.textContent = 'Passwort geändert.'; ['#pw-old','#pw-new'].forEach(s => $(s).value = ''); }
-    catch { m.className = 'error'; m.textContent = 'Username oder aktuelles Passwort stimmen nicht.'; }
-  };
-  $('#lock-btn').onclick = lock;
+  $('#bk-yes').onclick = async () => { try { await importBackup(pending); KEY = null; S = null; RAW = null; photoURL.clear(); show('recover'); } catch { const e = $('#bk-err'); e.hidden = false; e.textContent = 'Diese Datei ist keine gültige Adlerblick-Sicherung.'; $('#bk-confirm').hidden = true; } };
+  $('#pin-change').onclick = () => { FLOW = 'change'; show('pinsetup'); };
+  const lb = $('#lock-btn'); if (lb) lb.onclick = lock;
   const da = $('#demo-add'); if (da) da.onclick = async () => { da.disabled = true; da.textContent = 'Wird geladen …'; await seedDemo(); renderers.settings(); };
   const dr = $('#demo-rm'); if (dr) dr.onclick = () => { S.entries.filter(e => e.demo && e.photoId).forEach(e => DB.del('photo:' + e.photoId)); S.entries = S.entries.filter(e => !e.demo); Object.keys(S.days).forEach(d => S.days[d].demo && delete S.days[d]); S.weekFeel = {}; momentPick = null; save(); renderers.settings(); };
   $('#wipe-yes').onclick = async () => { await DB.clear(); META = null; KEY = null; S = null; show('setup'); };
@@ -990,6 +1120,9 @@ function overviewHTML(P, list) {
     <div class="two"><div class="col"><span class="sec">Orte</span>${orte.length ? orte.map(([k, c]) => `<span>${ORTE[k]}: ${c} ${c === 1 ? 'Tag' : 'Tage'}</span>`).join('') : '<span>Keine Angabe</span>'}</div>
       <div class="col"><span class="sec">Bauchgefühl und Einträge</span>${feel != null ? `<span>Bauchgefühl im Rückblick: <b>${sgn(feel)}</b></span>` : '<span>Kein Bauchgefühl erfasst</span>'}<span>Einträge: ${posWins ? 'Schönes wog mehr' : 'Schweres wog mehr'}</span></div></div>
     ${rev.length ? `<div class="col"><span class="sec">Mit Abstand betrachtet</span><span>${rev.length} schwere ${rev.length === 1 ? 'Erlebnis' : 'Erlebnisse'} im Rückblick neu bewertet: vorher Gewicht <b>${before}</b>, jetzt <b>${after}</b>.</span></div>` : ''}
+    ${(() => { const kq = tagStats(list.filter(e => e.type === 'pos')).slice(0, 4), bl = tagStats(list.filter(e => e.type === 'neg')).slice(0, 3);
+      return kq.length || bl.length ? `<div class="two"><div class="col"><span class="sec">Kraftquellen</span>${kq.map(([g, s]) => `<span>${esc(g)}: ${s.n}× schön, Ø +${Math.round(s.w / s.n)}</span>`).join('') || '<span>–</span>'}</div>
+        <div class="col"><span class="sec">Häufige Belastungen</span>${bl.map(([g, s]) => `<span>${esc(g)}: ${s.n}× schwer, Ø −${Math.round(s.w / s.n)}</span>`).join('') || '<span>–</span>'}</div></div>` : ''; })()}
     ${best ? `<div class="best">${EX.photos && best.photoId ? `<img data-photo="${best.photoId}" alt="">` : ''}<div><span class="sec" style="color:var(--posink)">Schönster Moment</span><p style="font-family:var(--fd);font-size:14px">${esc(best.text)}</p>${best.why ? `<p style="color:var(--posink)">${esc(best.why)}</p>` : ''}</div></div>` : ''}`;
 }
 function entHTML(e) {
@@ -1066,20 +1199,180 @@ async function sharePdf() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 
+/* ---------- PIN ---------- */
+const padHTML = () => `<div class="pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-k="${n}">${n}</button>`).join('')}<button type="button" class="e" tabindex="-1" aria-hidden="true"></button><button type="button" data-k="0">0</button><button type="button" class="bk" data-k="del" aria-label="Letzte Ziffer löschen">⌫</button></div>`;
+const dotsHTML = (n, err) => `<div class="dots4 ${err ? 'err' : ''}" aria-label="${n} von 4 Ziffern">${[0,1,2,3].map(i => `<i class="${i < n ? 'f' : ''}"></i>`).join('')}</div>`;
+const PN = { entry:'', tries:0, until:0, busy:false, msg:'', err:false };
+renderers.pin = () => { Object.assign(PN, { entry:'', msg:'', err:false, busy:false }); drawPin(); };
+function drawPin() {
+  $('#s-pin').innerHTML = `<div class="stack-s center" style="display:flex;margin-top:24px">${eagle('l', 'calm')}<h1>Schön, dass du wieder da bist.</h1></div>
+    ${dotsHTML(PN.entry.length, PN.err)}<p class="error" style="text-align:center;min-height:1.4em">${esc(PN.msg)}</p>${padHTML()}
+    <button class="link" data-go="recover" style="align-self:center">PIN vergessen?</button>`;
+}
+async function pinKey(k) {
+  if (PN.busy) return;
+  PN.err = false;
+  if (k === 'del') PN.entry = PN.entry.slice(0, -1); else if (PN.entry.length < 4) PN.entry += k;
+  drawPin(); if (PN.entry.length < 4) return;
+  if (Date.now() < PN.until) { PN.msg = 'Bitte warte noch einen Moment.'; PN.entry = ''; return drawPin(); }
+  PN.busy = true;
+  try { await unlockPin(PN.entry); PN.tries = 0; PN.busy = false; show('home'); }
+  catch {
+    PN.busy = false; PN.tries++; PN.entry = ''; PN.err = true;
+    PN.msg = PN.tries >= 5 ? 'Zu viele Versuche. Bitte warte 30 Sekunden.' : 'Die PIN stimmt nicht. Probier es nochmal.';
+    if (PN.tries >= 5) { PN.until = Date.now() + 30000; PN.tries = 0; }
+    drawPin();
+  }
+}
+$('#s-pin').addEventListener('click', ev => { const b = ev.target.closest('[data-k]'); if (b) pinKey(b.dataset.k); });
+const PS = { choice:'pin', first:null, entry:'', msg:'', busy:false };
+renderers.pinsetup = () => { Object.assign(PS, { choice:'pin', first:null, entry:'', msg:'', busy:false }); drawPS(); };
+function drawPS() {
+  const title = { setup:'Möchtest du dein Tagebuch mit einer PIN schützen?', migrate:'Neu: Dein Tagebuch öffnet sich jetzt mit einer PIN', recover:'Lege eine neue PIN fest', change:'PIN ändern' }[FLOW] || 'PIN festlegen';
+  const opt = (v, b, s) => `<button class="optc" data-c="${v}" aria-pressed="${PS.choice === v}"><span class="rd"></span><span><b>${b}</b><small>${s}</small></span></button>`;
+  $('#s-pinsetup').innerHTML = `${FLOW === 'change' ? `<div class="topbar"><button class="back" data-go="settings">← Einstellungen</button><span class="eyb">PIN</span></div>` : ''}
+    <div class="stack-s center" style="display:flex">${eagle('m')}<h2 style="text-align:center">${title}</h2>
+      ${FLOW === 'migrate' ? '<p class="muted small" style="text-align:center">Username und Passwort brauchst du danach nicht mehr.</p>' : ''}</div>
+    ${opt('pin', 'Ja, mit PIN schützen', 'Empfohlen. Dann kann niemand mitlesen, auch wenn dein Handy entsperrt herumliegt.')}
+    ${opt('none', 'Nein, direkt öffnen', 'Geschützt nur durch die Sperre deines iPhones.')}
+    ${PS.choice === 'pin' ? `<p class="qline" style="text-align:center">${PS.first ? 'Bitte gib die PIN zur Bestätigung nochmal ein' : 'Wähle eine 4-stellige PIN'}</p>
+      ${dotsHTML(PS.entry.length, !!PS.msg)}<p class="error" style="text-align:center;min-height:1.4em">${esc(PS.msg)}</p>${padHTML()}`
+      : `<button class="btn" id="ps-none">Weiter ohne PIN</button>`}
+    <p class="muted small" style="text-align:center">In den Einstellungen jederzeit änderbar.</p>`;
+}
+async function finishPin(pin) {
+  PS.busy = true;
+  await setPin(pin);
+  if (FLOW === 'recover') await openWith(RAW);
+  await save(true);
+  const f = FLOW; FLOW = null; PS.busy = false;
+  show(f === 'setup' ? 'code' : f === 'change' ? 'settings' : 'home');
+}
+function psKey(k) {
+  if (PS.busy) return;
+  if (k === 'del') PS.entry = PS.entry.slice(0, -1); else if (PS.entry.length < 4) PS.entry += k;
+  PS.msg = ''; drawPS(); if (PS.entry.length < 4) return;
+  if (!PS.first) { PS.first = PS.entry; PS.entry = ''; return setTimeout(drawPS, 150); }
+  if (PS.entry === PS.first) return finishPin(PS.first);
+  PS.first = null; PS.entry = ''; PS.msg = 'Die beiden PINs stimmen nicht überein. Bitte nochmal.'; setTimeout(drawPS, 150);
+}
+$('#s-pinsetup').addEventListener('click', ev => {
+  const k = ev.target.closest('[data-k]'); if (k) return psKey(k.dataset.k);
+  const c = ev.target.closest('[data-c]'); if (c) { PS.choice = c.dataset.c; PS.first = null; PS.entry = ''; PS.msg = ''; return drawPS(); }
+  if (ev.target.closest('#ps-none')) finishPin(null);
+});
+document.addEventListener('keydown', ev => {
+  const k = /^[0-9]$/.test(ev.key) ? ev.key : ev.key === 'Backspace' ? 'del' : null; if (!k) return;
+  if (!$('#s-pin').hidden) pinKey(k); else if (!$('#s-pinsetup').hidden && PS.choice === 'pin') psKey(k);
+});
+
+/* ---------- Kalender ---------- */
+const CAL = { off:0, sel:null };
+function dayInfo(d) {
+  const l = S.entries.filter(e => e.date === d && valid(e)), sm = summarize(l), dd = S.days[d] || {};
+  return { l, sm, has: l.length > 0, skip: !!dd.skip, ort: dd.ort };
+}
+renderers.calendar = () => {
+  const el = $('#s-calendar'), t = today(), base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + CAL.off);
+  const y = base.getFullYear(), m = base.getMonth(), n = new Date(y, m + 1, 0).getDate(), lead = (base.getDay() + 6) % 7;
+  let cells = ['Mo','Di','Mi','Do','Fr','Sa','So'].map(d => `<b>${d}</b>`).join('') + '<span></span>'.repeat(lead);
+  for (let i = 1; i <= n; i++) {
+    const d = ds(new Date(y, m, i)), inf = dayInfo(d);
+    const cls = [d > t ? 'f' : inf.has ? (inf.sm.wPos >= inf.sm.wNeg ? 'p' : 'n') : inf.skip ? 's' : '', d === t ? 't' : '', CAL.sel === d ? 'on' : ''].join(' ');
+    cells += `<button type="button" class="${cls}" data-day="${d}" ${d > t ? 'disabled' : ''} aria-label="${esc(fmtLong(d))}">${i}</button>`;
+  }
+  let detail = '';
+  if (CAL.sel) {
+    const inf = dayInfo(CAL.sel);
+    detail = `<div class="card" style="gap:6px"><b>${esc(fmtLong(CAL.sel))}${ORTE[inf.ort] ? ' · ' + ORTE[inf.ort] : ''}</b>
+      <p class="muted small">${inf.has ? `${inf.sm.nNeg} schwere, ${inf.sm.nPos} schöne Momente · Bilanz ${sgn(inf.sm.wPos - inf.sm.wNeg)}` : inf.skip ? 'Übersprungen' : 'Noch nichts eingetragen'}</p>
+      <button class="link" style="align-self:flex-start" data-go="entry" data-date="${CAL.sel}">${inf.has ? 'Tag öffnen ›' : 'Jetzt eintragen ›'}</button></div>`;
+  }
+  el.innerHTML = `${topbar('Kalender')}
+    <div class="cal"><div class="hd"><button data-m="-1" aria-label="Vorheriger Monat">‹</button><b>${base.toLocaleDateString('de-DE', {month:'long', year:'numeric'})}</b><button data-m="1" aria-label="Nächster Monat" ${CAL.off >= 0 ? 'disabled' : ''}>›</button></div>
+      <div class="cg">${cells}</div></div>
+    <div class="leg"><span><i style="background:var(--pos)"></i>Schönes überwog</span><span><i style="background:var(--neg)"></i>Schweres überwog</span><span><i style="border:1.5px dashed var(--line)"></i>übersprungen</span><span><i style="border:1.5px solid var(--line)"></i>offen</span></div>
+    ${detail || '<p class="muted small">Tippe auf einen Tag, um ihn anzusehen oder nachzutragen.</p>'}`;
+  el.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { CAL.off = Math.min(0, CAL.off + +b.dataset.m); CAL.sel = null; renderers.calendar(); });
+  el.querySelectorAll('[data-day]').forEach(b => b.onclick = () => { CAL.sel = b.dataset.day; renderers.calendar(); });
+};
+
+/* ---------- Kraftquellen und Belastungen ---------- */
+const TR = { tab:'pos', range:'90' };
+const IMPULS = { Sport:'einer kleinen Runde Bewegung', Natur:'einem kurzen Spaziergang', Familie:'einem Anruf bei deiner Familie', Freunde:'einer Nachricht an einen Freund', Ruhe:'einer bewussten Pause nur für dich', Kultur:'Musik oder einem guten Film', Essen:'etwas Leckerem' };
+function tagStats(list) {
+  const st = {};
+  list.forEach(e => tagsOf(e).forEach(g => { const s = (st[g] ||= { n:0, w:0, rv:0, before:0, after:0, last:'' });
+    s.n++; s.w += weight(e); if (e.date > s.last) s.last = e.date;
+    if (e.g2 != null || e.r2 != null) { s.rv++; s.before += Math.abs(e.g) * e.r; s.after += weight(e); } }));
+  return Object.entries(st).sort((a, b) => b[1].n - a[1].n);
+}
+renderers.trends = () => {
+  const el = $('#s-trends'), t = today(), from = TR.range === 'all' ? '0000-00-00' : addDays(t, -(+TR.range) + 1);
+  const list = S.entries.filter(e => valid(e) && e.date >= from && e.date <= t);
+  const pos = list.filter(e => e.type === 'pos'), neg = list.filter(e => e.type === 'neg');
+  const bal = {}; list.forEach(e => { bal[e.date] = (bal[e.date] || 0) + (e.type === 'pos' ? 1 : -1) * weight(e); });
+  const chip = (k, v, l) => `<button class="chip" data-k="${k}" data-v="${v}" aria-pressed="${TR[k] === v}">${l}</button>`;
+  const rows = tagStats(TR.tab === 'pos' ? pos : neg).slice(0, 6), maxN = rows[0]?.[1].n || 1;
+  const avg = s => Math.round(s.w / s.n);
+  let body = '';
+  if (!rows.length) body = say(TR.tab === 'pos' ? 'Sobald du ein paar schöne Momente mit Themen markiert hast, erscheinen hier deine Kraftquellen.' : 'Hier erscheint, was dich öfter belastet, sobald es genug Einträge gibt.');
+  else {
+    body = `<div class="card" style="gap:10px">${rows.map(([g, s]) => `<div class="src"><span>${esc(g)}<small>${s.n}× ${TR.tab === 'pos' ? 'schön' : 'schwer'}</small></span><div class="t"><i style="width:${Math.round(s.n / maxN * 100)}%;background:${TR.tab === 'pos' ? 'var(--pos)' : 'var(--neg)'}"></i></div><b>Ø ${TR.tab === 'pos' ? '+' : '−'}${avg(s)}</b></div>`).join('')}</div>`;
+    const days = Object.keys(bal);
+    if (TR.tab === 'pos') {
+      let best = null;
+      rows.slice(0, 4).forEach(([g]) => {
+        const withD = new Set(pos.filter(e => tagsOf(e).includes(g)).map(e => e.date));
+        const a = days.filter(d => withD.has(d)), b = days.filter(d => !withD.has(d));
+        if (a.length >= 3 && b.length >= 3) { const diff = a.reduce((x, d) => x + bal[d], 0) / a.length - b.reduce((x, d) => x + bal[d], 0) / b.length; if (diff >= 3 && (!best || diff > best.diff)) best = { g, diff }; }
+      });
+      if (best) body += `<div class="insight"><b>Zusammenhang:</b> An Tagen mit ${esc(best.g)} war deine Tagesbilanz im Schnitt <b>${sgn(Math.round(best.diff))}</b> besser als an Tagen ohne.</div>`;
+      const WSTOP = new Set('kam kamen genau richtig richtigen moment momente raus rein kopf tag tage tages abend abends morgens mittag woche heute gemacht macht machen gesehen ging gehen haben hatten wurde gewesen bisschen einfach endlich nochmal wirklich'.split(' '));
+      const wc = {}; pos.forEach(e => new Set(words(e.text).filter(w => w.length >= 4 && !WSTOP.has(w))).forEach(w => { wc[w] = (wc[w] || 0) + 1; }));
+      const top = Object.entries(wc).filter(([, c]) => c >= 2).sort((a, b) => b[1] - a[1]).slice(0, 8);
+      if (top.length) { const mx = top[0][1]; body += `<div class="card" style="gap:6px"><span class="eyb">Häufige Wörter in schönen Momenten</span><div class="words">${top.map(([w, c]) => `<span style="font-size:${(0.9 + c / mx * 0.8).toFixed(2)}rem">${esc(w[0].toUpperCase() + w.slice(1))}</span>`).join('')}</div></div>`; }
+      const strong = [...rows].sort((a, b) => b[1].n * avg(b[1]) - a[1].n * avg(a[1]))[0];
+      if (strong) { const [g, s] = strong, gap = daysBetween(s.last, t);
+        body += say(gap >= 7 ? `Seit ${gap} Tagen kein ${esc(g)}-Moment. Wie wäre es heute mit ${IMPULS[g] || 'etwas davon'}?` : `${esc(g)} tut dir gut. Schön, dass du dir das in letzter Zeit gönnst.`); }
+    } else {
+      const rv = rows.filter(([, s]) => s.rv >= 2 && s.after < s.before)[0];
+      if (rv) { const [g, s] = rv; body += `<div class="insight"><b>Mit Abstand:</b> Erlebnisse zum Thema ${esc(g)} hast du im Rückblick meist <b>milder</b> bewertet (Ø −${Math.round(s.before / s.rv)} → −${Math.round(s.after / s.rv)}).</div>`; }
+      const perDay = o => { const ds_ = days.filter(d => S.days[d]?.ort === o); return ds_.length >= 2 ? neg.filter(e => ds_.includes(e.date)).length / ds_.length : null; };
+      const w = perDay('work'), h = perDay('home');
+      if (w != null && h != null && w > h * 1.3) body += `<div class="insight"><b>Muster:</b> Auf Dienstreisen gab es im Schnitt mehr schwere Momente (${w.toFixed(1).replace('.', ',')} pro Tag statt ${h.toFixed(1).replace('.', ',')} zu Hause).</div>`;
+      const g0 = rows[0][0], hard = new Set(neg.filter(e => tagsOf(e).includes(g0)).map(e => e.date)), cnt = {};
+      pos.filter(e => hard.has(e.date)).forEach(e => tagsOf(e).forEach(p => { cnt[p] = (cnt[p] || 0) + 1; }));
+      const helper = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+      body += helper ? `<div class="insight good"><b>Gegengewicht:</b> An Tagen mit schweren ${esc(g0)}-Momenten tat dir vor allem <b>${esc(helper[0])}</b> gut.</div>`
+        : `<div class="insight good">Schweres ist nur die eine Seite. Schau auch in deine Kraftquellen.</div>`;
+    }
+  }
+  el.innerHTML = `<div class="topbar"><button class="back" data-go="stats">← Auswertung</button><span class="eyb">Trends</span></div>
+    <h2>${TR.tab === 'pos' ? 'Deine Kraftquellen' : 'Was dich belastet'}</h2>
+    <div class="chips">${chip('tab', 'pos', 'Kraftquellen')}${chip('tab', 'neg', 'Was dich belastet')}</div>
+    <div class="chips">${chip('range', '30', '30 Tage')}${chip('range', '90', '3 Monate')}${chip('range', 'all', 'Alles')}</div>
+    <p class="muted small">${TR.tab === 'pos' ? 'Was dir am meisten Schönes bringt.' : 'Bewusst sachlich, ohne Wertung.'} Themen ohne Antippen schätzt die App aus deinem Text.</p>
+    ${body}`;
+  el.querySelectorAll('.chip[data-k]').forEach(c => c.onclick = () => { TR[c.dataset.k] = c.dataset.v; renderers.trends(); });
+};
+
 /* ---------- Beispieldaten (nur zum Testen) ---------- */
 async function seedDemo() {
   let seed = 7; const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647; const pick = a => a[Math.floor(r() * a.length)];
   const T = {
     negP: ['Streit über eine Kleinigkeit beim Abendessen','Paket kam wieder nicht an','Schlecht geschlafen','Waschmaschine ausgelaufen','Handwerkertermin geplatzt','Ärger mit dem Nachbarn wegen des Parkplatzes','Im Regen nass geworden','Handydisplay gesprungen'],
     negB: ['Meeting lief zäh und ohne Ergebnis','Kritik vom Chef vor dem Team','Zug 40 Minuten Verspätung','Hotelzimmer laut und klein','Präsentation wurde verschoben','E-Mail-Flut am Morgen','Kunde hat kurzfristig abgesagt','Ärger mit dem Kunden am Telefon'],
-    posP: ['Abendessen mit alten Freunden','Langer Spaziergang im Wald bei Sonne','Telefonat mit meiner Schwester','Neues Rezept ausprobiert, richtig gut','Kinoabend','Fahrradtour am See','Ausgeschlafen, Kaffee auf dem Balkon','Konzert besucht','Laufrunde bei Sonnenuntergang'],
+    posP: ['Abendessen mit alten Freunden','Langer Spaziergang im Wald bei Sonne','Telefonat mit meiner Schwester','Neues Rezept ausprobiert, richtig gut','Kinoabend','Fahrradtour am See','Ausgeschlafen, Kaffee auf dem Balkon','Konzert besucht','Laufrunde bei Sonnenuntergang','Abend mit Lena auf dem Balkon','Neun Löcher Golf mit Tom'],
     posB: ['Lob vom Kunden für das Projekt','Kollege hat mir spontan geholfen','Präsentation lief richtig gut','Schönes Abendessen mit dem Team auf Dienstreise','Projekt erfolgreich abgeschlossen'],
     why: ['Wir haben so viel gelacht.','Ich hatte endlich mal Ruhe im Kopf.','Ich habe gemerkt, dass ich gebraucht werde.','Die Sonne kam genau im richtigen Moment raus.','']
   };
   const t = today(), add = [];
+  S.profile.created = addDays(t, -56); if (!S.topics.includes('Golf')) S.topics.push('Golf'); S.learn.lena = 'Familie';
   for (let i = 55; i >= 1; i--) {
+    if (i === 2 || i === 3) continue;
     const d = addDays(t, -i), cyc = i % 14, ort = cyc >= 9 && cyc <= 11 ? 'work' : (i >= 20 && i <= 23 ? 'trip' : 'home');
-    S.days[d] = { ort, demo: true };
+    S.days[d] = { ort, demo: true, done: true };
     const nNeg = 1 + Math.floor(r() * (ort === 'work' ? 4 : 3)), nPos = 1 + Math.floor(r() * 2);
     for (let j = 0; j < nNeg; j++) {
       const b = ort === 'work' ? (r() < .8 ? 'beruflich' : 'privat') : (r() < .45 ? 'beruflich' : 'privat');
@@ -1104,7 +1397,9 @@ async function seedDemo() {
     x.fillStyle = c; x.beginPath(); x.moveTo(0, 470); for (let px = 0; px <= 800; px += 40) x.lineTo(px, 440 + Math.sin(px / 110 + k) * 36); x.lineTo(800, 600); x.lineTo(0, 600); x.fill();
     tops[k].photoId = await storeCanvas(cv);
   }
-  S.weekFeel[weekKey(addDays(t, -7))] = -3;
+  add.forEach(e => { e.tags = r() < .6 ? suggestAll(e) : []; });
+  for (let w = weekKey(addDays(t, -56)); w < reviewWeek(); w = addDays(w, 7)) S.reviewsDone[w] = true;
+  S.weekFeel[weekKey(addDays(t, -14))] = -3;
   S.entries.push(...add); momentPick = null; await save(true);
 }
 
@@ -1114,16 +1409,13 @@ let pendingCode = '', setupGender = 'm';
 $('#su-gender').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; setupGender = b.dataset.v; $('#su-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
 $('#setup-form').addEventListener('submit', async ev => {
   ev.preventDefault();
-  const name = $('#su-name').value.trim(), user = $('#su-user').value.trim(), pw = $('#su-pw').value, pw2 = $('#su-pw2').value;
+  const name = $('#su-name').value.trim();
   if (!name) return showErr('#su-err', 'Bitte gib deinen Namen ein.');
-  if (user.length < 3) return showErr('#su-err', 'Der Username braucht mindestens 3 Zeichen.');
-  if (pw.length < 6) return showErr('#su-err', 'Das Passwort braucht mindestens 6 Zeichen.');
-  if (pw !== pw2) return showErr('#su-err', 'Die beiden Passwörter stimmen nicht überein.');
-  showErr('#su-err', ''); pendingCode = await createAccount(name, setupGender, user, pw); show('code');
+  showErr('#su-err', ''); pendingCode = await createAccount(name, setupGender); FLOW = 'setup'; show('pinsetup');
 });
 $('#su-demo').addEventListener('click', async ev => {
   const b = ev.currentTarget; b.disabled = true; b.textContent = 'Wird vorbereitet …';
-  pendingCode = await createAccount('Max', 'm', 'test', 'test123'); await seedDemo(); show('code');
+  pendingCode = await createAccount('Max', 'm'); await setPin('1234'); await seedDemo(); show('code');
   b.disabled = false; b.textContent = 'Mit Beispieldaten ausprobieren';
 });
 renderers.setup = () => { $('#demo-box').hidden = !(inFrame || location.protocol === 'file:' || location.hash === '#test'); };
@@ -1137,19 +1429,19 @@ $('#code-copy').addEventListener('click', async ev => {
 });
 $('#login-form').addEventListener('submit', async ev => {
   ev.preventDefault(); const btn = $('#li-btn'); btn.disabled = true; btn.textContent = 'Wird geöffnet …';
-  try { await unlock($('#li-user').value, $('#li-pw').value); showErr('#li-err', ''); show('home'); }
+  try { await unlockLegacy($('#li-user').value, $('#li-pw').value); showErr('#li-err', ''); FLOW = 'migrate'; show('pinsetup'); }
   catch { KEY = null; S = null; showErr('#li-err', 'Username oder Passwort stimmen nicht. Probier es nochmal in Ruhe.'); }
   btn.disabled = false; btn.textContent = 'Tagebuch öffnen';
 });
 $('#rec-form').addEventListener('submit', async ev => {
   ev.preventDefault();
-  const code = $('#rc-code').value, user = $('#rc-user').value.trim(), pw = $('#rc-pw').value;
+  const code = $('#rc-code').value;
   if (normCode(code).length !== 16) return showErr('#rc-err', 'Der Code hat 16 Zeichen, zum Beispiel ABCD-EFGH-JKLM-NPQR.');
-  if (user.length < 3) return showErr('#rc-err', 'Der Username braucht mindestens 3 Zeichen.');
-  if (pw.length < 6) return showErr('#rc-err', 'Das Passwort braucht mindestens 6 Zeichen.');
-  try { await recover(code, user, pw); showErr('#rc-err', ''); $('#li-user').value = user; $('#rc-code').value = ''; $('#rc-pw').value = ''; show('login'); }
+  try { await unlockCode(code); showErr('#rc-err', ''); $('#rc-code').value = ''; FLOW = 'recover'; show('pinsetup'); }
   catch { showErr('#rc-err', 'Dieser Code passt nicht. Prüf ihn bitte Zeichen für Zeichen.'); }
 });
+renderers.recover = () => { $('#rc-back').hidden = !(META && META.mode === 'pin'); };
+$('#rc-back').addEventListener('click', () => show('pin'));
 
 /* ---------- Automatisch sperren nach 5 Minuten im Hintergrund ---------- */
 document.addEventListener('visibilitychange', () => {
@@ -1162,7 +1454,7 @@ document.addEventListener('visibilitychange', () => {
   if (!window.crypto?.subtle) { const f = $('#fatal'); f.hidden = false; f.textContent = 'Dieser Browser unterstützt die Verschlüsselung nicht. Öffne die Seite bitte in Safari über https.'; return; }
   await DB.open();
   try { META = await DB.get('meta'); } catch { META = null; }
-  show(META ? 'login' : 'setup');
+  try { await route(); } catch { show('recover'); }
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();
 })();
