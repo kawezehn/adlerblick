@@ -231,6 +231,21 @@ ol.howto{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px
 .words{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
 .words span{font-family:var(--fd);color:var(--posink);line-height:1.2}
 .copy{font-size:.75rem;color:var(--muted);text-align:center}
+/* Version 5: Adlerperspektive */
+.sky{border-radius:24px;overflow:hidden}
+.sky svg{display:block;width:100%;height:auto}
+.breath{display:flex;align-items:center;gap:10px;justify-content:center;color:var(--muted);font-size:.9rem;font-weight:700;min-height:28px}
+.breath i{width:24px;height:24px;border-radius:50%;border:3px solid var(--primary);border-right-color:var(--line);display:block}
+.quote2{background:var(--card);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.quote2 p{font:500 1.2rem/1.25 var(--fd)}
+.quote2 small{color:var(--muted);font-size:.82rem}
+.wait{opacity:.35;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+  .glide{animation:glide 3s ease-out both}
+  @keyframes glide{from{transform:translate(180px,60px) scale(.55);opacity:.2}to{transform:translate(180px,108px) scale(1);opacity:1}}
+  .breath i{animation:spin 1.2s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+}
 
 /* Export */
 .datebar{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:99px;padding:6px;font-weight:800}
@@ -557,8 +572,8 @@ renderers.home = () => {
   }
   const m = pos.find(p => p.id === momentPick);
   const todayHas = S.entries.some(e => e.date === t && valid(e));
-  const rw = reviewWeek(), isSunday = new Date().getDay() === 0, missing = missingDays();
-  const reviewOpen = !S.reviewsDone[rw] && (isSunday || S.entries.some(e => valid(e) && e.date >= rw && e.date <= addDays(rw, 6)));
+  const RI = reviewInfo(), isSunday = new Date().getDay() === 0, missing = missingDays();
+  const reviewOpen = RI.available && !S.reviewsDone[RI.wk] && (isSunday || S.entries.some(e => valid(e) && e.date >= RI.from && e.date <= RI.to));
   const needBackup = S.lastBackupMonth !== month && S.backupSnooze !== month && S.profile.created.slice(0, 7) !== month;
   const isDemo = S.entries.some(e => e.demo);
   const days = [...new Set(S.entries.filter(valid).map(e => e.date))].sort().reverse().slice(0, 5);
@@ -568,7 +583,7 @@ renderers.home = () => {
     <h1>Willkommen ${esc(S.profile.name)},<br>wie war dein Tag heute?</h1>
     ${missing.length ? `<div class="card">${say('Kein Problem, wenn mal ein Tag fehlt. Möchtest du diese Tage noch nachholen?', 'calm')}
       ${missing.map(d => `<div class="mrow"><span>${esc(fmtLong(d))}</span><span class="row" style="gap:6px"><button class="btn sm" data-go="entry" data-date="${d}">Nachholen</button><button class="btn sm ghost" data-skip="${d}">Überspringen</button></span></div>`).join('')}</div>` : ''}
-    ${reviewOpen ? `<button class="banner" data-go="review" style="border:0;text-align:left;cursor:pointer">${eagle('s','calm')}<span><b>${isSunday ? 'Es ist Sonntag.' : 'Dein Wochenrückblick ist noch offen.'}</b><span class="small muted">${isSunday ? 'Schau mit etwas Abstand auf deine Woche zurück.' : `Woche ${esc(fmtShort(rw))} – ${esc(fmtShort(addDays(rw, 6)))}`}</span></span></button>` : ''}
+    ${reviewOpen ? `<button class="banner" data-go="review" style="border:0;text-align:left;cursor:pointer">${eagle('s','calm')}<span><b>${isSunday ? 'Es ist Sonntag.' : 'Dein Wochenrückblick ist noch offen.'}</b><span class="small muted">${isSunday ? 'Schau mit etwas Abstand auf deine Woche zurück.' : `Woche ${esc(fmtShort(RI.from))} – ${esc(fmtShort(RI.to))}`}</span></span></button>` : ''}
     ${needBackup ? `<div class="banner">${eagle('s')}<div class="stack-s" style="flex:1"><b>Neuer Monat, Zeit für deine Sicherung.</b><div class="row"><button class="btn sm" data-go="settings">Sicherung speichern</button><button class="btn sm ghost" id="snooze">Später</button></div></div></div>` : ''}
     <button class="btn" data-go="entry" data-date="${t}">${todayHas ? 'Heutigen Tag ergänzen' : 'Tag eintragen'}</button>
     ${m ? `<div class="moment"><span class="eyb">Weißt du noch? · ${esc(fmtShort(m.date))}</span>
@@ -598,9 +613,16 @@ function missingDays() {
   return out;
 }
 function reviewWeek() { const t = today(), cur = weekKey(t); return new Date().getDay() === 0 ? cur : addDays(cur, -7); }
+function firstEntryDate() { let m = null; S.entries.forEach(e => { if (valid(e) && (!m || e.date < m)) m = e.date; }); return m; }
+function reviewInfo() {
+  const wk = reviewWeek(), sun = addDays(wk, 6), fs = firstEntryDate();
+  if (!fs) return { wk, available:false, firstSunday:null };
+  if (fs >= sun) { const s = addDays(weekKey(fs), 6); return { wk, available:false, firstSunday: fs === s ? addDays(s, 7) : s }; }
+  return { wk, available:true, from: fs > wk ? fs : wk, to: sun, first: fs > wk };
+}
 function nextSunday() { const d = new Date().getDay(); return addDays(today(), d === 0 ? 7 : 7 - d); }
 function isoWeek(s) { const d = parseD(s); d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7)); const w1 = new Date(d.getFullYear(), 0, 4); return 1 + Math.round(((d - w1) / 864e5 - 3 + ((w1.getDay() + 6) % 7)) / 7); }
-const weekHead = wk => `<div class="wk"><span><small>Deine Woche</small><b>${esc(fmtShort(wk))} – ${esc(fmtShort(addDays(wk, 6)))}</b></span><span class="tag">KW ${isoWeek(wk)}</span></div>`;
+const weekHead = (wk, from = wk, first = false) => `<div class="wk"><span><small>${first ? 'Deine erste Woche' : 'Deine Woche'}</small><b>${esc(fmtShort(from))} – ${esc(fmtShort(addDays(wk, 6)))}</b></span><span class="tag">KW ${isoWeek(wk)}</span></div>`;
 
 /* ---------- Themen (Chips): Wörterbuch, lokal, ohne Internet ---------- */
 const POS_T = ['Sport','Natur','Familie','Freunde','Ruhe','Kultur','Essen','Arbeit'];
@@ -647,7 +669,7 @@ function chipsHTML(e) {
 const ED = { date: today(), step: 'ort' };
 const dayEntries = type => S.entries.filter(e => e.date === ED.date && e.type === type);
 function newEntry(type) {
-  const e = { id: uid(), date: ED.date, type, text: '', why: '', tags: [], bereich: S.days[ED.date]?.ort === 'work' ? 'beruflich' : 'privat', g: type === 'neg' ? -3 : 3, r: 3, created: Date.now() };
+  const e = { id: uid(), date: ED.date, type, text: '', why: '', tags: [], bereich: S.days[ED.date]?.ort === 'work' ? 'beruflich' : 'privat', g: type === 'neg' ? -1 : 1, r: 1, created: Date.now() };
   S.entries.push(e); return e;
 }
 function prune() {
@@ -679,17 +701,11 @@ function entryCard(e) {
     <div class="q"><div class="q-top"><label for="g-${e.id}">Wie ${neg ? 'negativ' : 'positiv'} hast du dieses Gefühl in dem Moment wahrgenommen?</label><output class="val g" id="go-${e.id}">${sgn(e.g)}</output></div>
       <input type="range" class="g" id="g-${e.id}" data-f="g" min="1" max="5" step="1" value="${a}">
       <div class="scale"><span>${neg ? '−1' : '+1'} etwas</span><span>${neg ? '−5' : '+5'} sehr stark</span></div></div>
-    ${neg && a === 5 && e.adler === 'shown' ? `<div class="stack-s">${say('<b>Das klingt gerade sehr intensiv.</b> Schau mal mit mir von oben drauf: Wie wichtig ist das in einem Monat noch?', '', 'neg')}
-      <div class="chips"><button class="chip" data-act="adler-ok">Passt so</button><button class="chip" data-act="adler-adjust">Nochmal einschätzen</button><button class="chip on" data-act="adler-flag">Am Sonntag ansehen</button></div></div>` : ''}
-    ${e.flag ? `<p class="flagged">Gut, das schauen wir uns am Sonntag nochmal gemeinsam an.</p>` : ''}
-    <div class="q"><div class="q-top"><label for="r-${e.id}">Aus der Adlerperspektive: Wie relevant bewertest du dieses Ereignis ganzheitlich für dein Leben?</label><output class="val r" id="ro-${e.id}">${e.r}</output></div>
-      <input type="range" id="r-${e.id}" data-f="r" min="1" max="5" step="1" value="${e.r}">
-      <div class="scale"><span>1 Kleinigkeit</span><span>5 sehr relevant</span></div></div>
   </article>`;
 }
 renderers.entry = () => {
   const el = $('#s-entry'), t = today(), day = S.days[ED.date] || {};
-  const idx = { ort:0, neg:1, pos:2, done:3 }[ED.step];
+  const idx = { ort:0, neg:1, negA:1, pos:2, posA:2, done:3 }[ED.step];
   let body = '';
   if (ED.step === 'ort') {
     body = `${say(`Schön, dass du da bist, ${esc(S.profile.name)}. Wo warst du ${ED.date === t ? 'heute' : 'an diesem Tag'}?`)}
@@ -705,8 +721,10 @@ renderers.entry = () => {
     body += `<div class="stack" id="cards">${dayEntries(type).map(entryCard).join('')}</div>
       <button class="add" data-act="add" data-v="${type}">+ Weiteres ${type === 'neg' ? 'Erlebnis' : 'schönes Erlebnis'}</button>`;
     body += type === 'neg'
-      ? `<button class="btn" data-act="next" data-v="pos">Weiter zu den schönen Momenten</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
-      : `<button class="btn" data-act="next" data-v="done">Tag abschließen</button>`;
+      ? `<button class="btn" data-act="lift" data-v="neg">Weiter: mit dem Adler abheben</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
+      : `<button class="btn" data-act="lift" data-v="pos">Weiter: mit dem Adler abheben</button>`;
+  } else if (ED.step === 'negA' || ED.step === 'posA') {
+    body = adlerBody();
   } else {
     prune(); S.days[ED.date] = { ...(S.days[ED.date] || {}), done:true, skip:false }; save();
     const l = S.entries.filter(e => e.date === ED.date && valid(e));
@@ -724,7 +742,64 @@ renderers.entry = () => {
     ${idx < 3 ? `<div class="steps">${['1 · Ort','2 · Schweres','3 · Schönes'].map((s, i) => `<span class="${i === idx ? 'on' : ''}">${s}</span>`).join('')}</div>` : ''}
     ${body}`;
   hydrate(el);
+  if (ED.step === 'negA' || ED.step === 'posA') startBreath();
 };
+const SEEN = new Set();
+const aType = () => ED.step === 'negA' ? 'neg' : 'pos';
+const aList = () => dayEntries(aType()).filter(valid);
+function skySVG() {
+  return `<svg viewBox="0 0 360 230" aria-hidden="true">
+   <defs><linearGradient id="hz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE3C4"/><stop offset=".35" stop-color="#F6D7A8"/><stop offset="1" stop-color="#E9D3A6"/></linearGradient></defs>
+   <rect width="360" height="230" fill="url(#hz)"/>
+   <polygon points="0,90 120,70 150,130 0,150" fill="#C9D3A0"/><polygon points="120,70 250,60 270,120 150,130" fill="#E8C37A"/>
+   <polygon points="250,60 360,55 360,125 270,120" fill="#B7C990"/><polygon points="0,150 150,130 165,200 0,230" fill="#D9B886"/>
+   <polygon points="150,130 270,120 290,190 165,200" fill="#A9BE86"/><polygon points="270,120 360,125 360,230 290,190" fill="#E3CB8E"/>
+   <polygon points="165,200 290,190 300,230 160,230" fill="#C7D49C"/>
+   <path d="M-10 120 C60 105 90 160 160 150 S260 110 370 140" stroke="#9FC0D6" stroke-width="10" fill="none" stroke-linecap="round"/>
+   ${[[60,105],[72,112],[200,95],[212,100],[310,170],[322,176]].map(([x,y]) => `<rect x="${x}" y="${y}" width="9" height="7" fill="#F6EFE6"/><polygon points="${x-1},${y} ${x+4.5},${y-5} ${x+10},${y}" fill="#C9845A"/>`).join('')}
+   ${[[30,180],[42,186],[110,200],[230,160],[245,166],[340,95],[95,80]].map(([x,y]) => `<circle cx="${x}" cy="${y}" r="6" fill="#7E9A63"/>`).join('')}
+   <ellipse cx="80" cy="40" rx="46" ry="12" fill="#fff" opacity=".7"/><ellipse cx="290" cy="30" rx="38" ry="10" fill="#fff" opacity=".6"/>
+   <ellipse cx="190" cy="178" rx="40" ry="8" fill="#5B4632" opacity=".12"/>
+   <g class="glide" transform="translate(180 108)">
+    <path d="M-12 -2 C-50 -38 -95 -30 -120 -8 C-92 -12 -70 0 -58 10 C-80 4 -98 12 -108 22 C-80 14 -50 18 -14 14Z" fill="#7E4F33"/>
+    <path d="M12 -2 C50 -38 95 -30 120 -8 C92 -12 70 0 58 10 C80 4 98 12 108 22 C80 14 50 18 14 14Z" fill="#7E4F33"/>
+    <ellipse cx="0" cy="10" rx="18" ry="24" fill="#9A6340"/><ellipse cx="0" cy="16" rx="10" ry="13" fill="#E9C9A4"/>
+    <circle cx="0" cy="-18" r="15" fill="#FFFDF8"/>
+    <path d="M-8 -19 q3 3 6 0" stroke="#2B1E17" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M2 -19 q3 3 6 0" stroke="#2B1E17" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="-9" cy="-13" r="2.5" fill="#F2A07B" opacity=".7"/><circle cx="9" cy="-13" r="2.5" fill="#F2A07B" opacity=".7"/>
+    <path d="M-4 -14 q4 -2 8 0 q-1 6 -4 8 q-3 -2 -4 -8z" fill="#F2B233"/>
+   </g></svg>`;
+}
+function adlerBody() {
+  const list = aList(), neg = aType() === 'neg';
+  if (ED.ai >= list.length) ED.ai = Math.max(0, list.length - 1);
+  const e = list[ED.ai]; if (!e) return '';
+  const fresh = !SEEN.has(e.id);
+  return `<div class="stack" data-id="${e.id}">
+    <p class="eyb" style="text-align:center">Adlerperspektive · ${ED.ai + 1} von ${list.length}</p>
+    <div class="sky">${skySVG()}</div>
+    ${ED.ai === 0 ? `<h2 style="text-align:center">Atme einmal tief durch.</h2>
+      <p class="muted" style="text-align:center">${neg ? 'Stell dir vor, du fliegst mit mir hoch über dein Leben. Von hier oben sieht vieles kleiner aus.' : 'Flieg mit mir hoch und schau dir deinen schönen Moment von oben an. Wie viel bedeutet er dir wirklich?'}</p>` : ''}
+    <div class="quote2"><small>${esc(fmtDay(e.date))}, ${e.bereich === 'beruflich' ? 'beruflich' : 'privat'} · im Moment gefühlt <b style="color:${neg ? 'var(--negink)' : 'var(--posink)'}">${sgn(e.g)}</b></small><p>${esc(e.text || 'Foto')}</p></div>
+    <div class="breath" id="breath" ${fresh ? '' : 'hidden'}><i></i>Einen Moment …</div>
+    <div class="q ${fresh ? 'wait' : ''}" id="a-q"><div class="q-top"><label for="r-${e.id}">Von hier oben: Wie ${neg ? 'relevant ist das' : 'wichtig ist dieser Moment'} für dein Leben, ganzheitlich betrachtet?</label><output class="val r" id="ro-${e.id}">${e.r}</output></div>
+      <input type="range" id="r-${e.id}" data-f="r" min="1" max="5" step="1" value="${e.r}" ${fresh ? 'disabled' : ''}>
+      <div class="scale"><span>1 Kleinigkeit</span><span>5 sehr ${neg ? 'relevant' : 'wichtig'}</span></div></div>
+    ${neg && Math.abs(e.g) === 5 ? `${say('Das war gerade sehr intensiv. Wenn du magst, schauen wir es uns am Sonntag mit noch mehr Abstand an.', 'calm', 'neg')}
+      <div class="chips"><button class="chip" data-act="aflag" aria-pressed="${!!e.flag}">Am Sonntag nochmal ansehen</button></div>` : ''}
+    <button class="btn" data-act="anext" id="a-next" ${fresh ? 'disabled' : ''}>${ED.ai < list.length - 1 ? 'Weiter' : neg ? 'Weiter zu den schönen Momenten' : 'Tag abschließen'}</button>
+    <button class="btn ghost" data-act="aprev">Zurück</button>
+  </div>`;
+}
+function startBreath() {
+  const e = aList()[ED.ai]; if (!e || SEEN.has(e.id)) return;
+  SEEN.add(e.id);
+  setTimeout(() => {
+    const q = $('#a-q'); if (!q) return; q.classList.remove('wait');
+    const r = $('#r-' + e.id), n = $('#a-next'), b = $('#breath');
+    if (r) r.disabled = false; if (n) n.disabled = false; if (b) b.hidden = true;
+  }, 3000);
+}
 const eById = id => S.entries.find(e => e.id === id);
 function rerenderCard(e) {
   const old = document.querySelector(`#cards [data-id="${e.id}"]`); if (!old) return;
@@ -742,6 +817,14 @@ $('#s-entry').addEventListener('click', ev => {
     if (last) { last.scrollIntoView({block:'center'}); last.querySelector('textarea')?.focus(); } return;
   }
   if (act === 'next') { prune(); save(); ED.step = b.dataset.v; return show('entry'); }
+  if (act === 'lift') {
+    prune(); save(); const type = b.dataset.v;
+    if (dayEntries(type).filter(valid).length) { ED.step = type + 'A'; ED.ai = 0; } else ED.step = type === 'neg' ? 'pos' : 'done';
+    return show('entry');
+  }
+  if (act === 'anext') { save(); ED.ai++; if (ED.ai >= aList().length) { ED.step = aType() === 'neg' ? 'pos' : 'done'; ED.ai = 0; } return show('entry'); }
+  if (act === 'aprev') { if (ED.ai > 0) ED.ai--; else ED.step = aType(); return show('entry'); }
+  if (act === 'aflag' && e) { e.flag = !e.flag; save(); b.setAttribute('aria-pressed', e.flag); return; }
   if (act === 'nothing') { S.entries = S.entries.filter(x => !(x.date === ED.date && x.type === 'neg' && !valid(x))); S.days[ED.date] = { ...(S.days[ED.date] || {}), nothingNeg:true }; save(); ED.step = 'pos'; return show('entry'); }
   if (!e) return;
   if (act === 'del') { if (e.photoId) DB.del('photo:' + e.photoId); S.entries = S.entries.filter(x => x !== e); save(); card.remove(); return; }
@@ -811,9 +894,14 @@ renderers.thoughts = () => {
 
 /* ---------- Sonntags-Rückblick ---------- */
 renderers.review = () => {
-  const el = $('#s-review'), t = today(), wk = reviewWeek(), from = wk, to = addDays(wk, 6), sunday = new Date().getDay() === 0;
+  const el = $('#s-review'), t = today(), RI = reviewInfo(), sunday = new Date().getDay() === 0;
+  if (!RI.available) {
+    el.innerHTML = `${topbar('Sonntags-Rückblick')}${say(RI.firstSunday ? `Dein erster Wochenrückblick ist am ${esc(fmtLong(RI.firstSunday))}. Bis dahin sammelst du einfach deine Tage.` : 'Sobald du deinen ersten Tag eingetragen hast, gibt es hier jeden Sonntag deinen Wochenrückblick.', 'calm')}<button class="btn" data-go="home">Zur Startseite</button>`;
+    return;
+  }
+  const wk = RI.wk, from = RI.from, to = RI.to;
   if (S.reviewsDone[wk]) {
-    el.innerHTML = `${topbar('Sonntags-Rückblick')}${weekHead(wk)}${say(`Diese Woche hast du schon abgeschlossen. Dein nächster Rückblick ist am ${esc(fmtLong(nextSunday()))}.`)}<button class="btn ghost" data-go="stats">Zur Auswertung</button>`;
+    el.innerHTML = `${topbar('Sonntags-Rückblick')}${weekHead(wk, from, RI.first)}${say(`Diese Woche hast du schon abgeschlossen. Dein nächster Rückblick ist am ${esc(fmtLong(nextSunday()))}.`)}<button class="btn ghost" data-go="stats">Zur Auswertung</button>`;
     return;
   }
   const week = S.entries.filter(e => e.date >= from && e.date <= to && e.date <= t && valid(e));
@@ -846,7 +934,7 @@ renderers.review = () => {
       <button class="btn" id="rv-done">Rückblick abschließen</button>`;
   }
   el.innerHTML = `${topbar('Sonntags-Rückblick')}
-    ${weekHead(wk)}
+    ${weekHead(wk, from, RI.first)}
     ${say(sunday ? `${esc(salutation())}, die Woche ist fast vorbei. Lass uns mit etwas Abstand darauf schauen.` : `${esc(salutation())}, lass uns mit etwas Abstand auf die vergangene Woche schauen.`, 'calm')}
     ${e ? `<p class="muted small">Diese Erlebnisse hast du besonders stark bewertet. Wie siehst du sie heute, ein paar Tage später?</p>` : ''}
     ${part}`;
@@ -1021,7 +1109,7 @@ renderers.settings = () => {
         <button class="btn sm danger" id="wipe-yes" style="align-self:flex-start">Endgültig löschen</button></div></details>
     </div>
     ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}
-    <p class="copy">Adlerblick · Version 4 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
+    <p class="copy">Adlerblick · Version 5 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
   $('#st-name').oninput = ev => { p.name = ev.target.value.trim() || p.name; save(); };
   $('#st-gender').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; p.gender = b.dataset.v; save(); $('#st-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
   $('#bk-save').onclick = async () => {

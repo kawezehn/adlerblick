@@ -1,6 +1,6 @@
 // Adlerblick: hält die App offline verfügbar. Speichert nur App-Dateien, niemals Tagebuch-Daten.
 // © 2026 Kevin Werner · Alle Rechte vorbehalten.
-const CACHE = 'adlerblick-v4';
+const CACHE = 'adlerblick-v5';
 const FILES = ['./', './index.html', './manifest.webmanifest', './apple-touch-icon.png', './icon-192.png', './icon-512.png', './libs/html2canvas.min.js', './libs/jspdf.umd.min.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
