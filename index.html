@@ -240,8 +240,14 @@ ol.howto{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px
 .quote2 p{font:500 1.2rem/1.25 var(--fd)}
 .quote2 small{color:var(--muted);font-size:.82rem}
 .wait{opacity:.35;pointer-events:none}
+.breathe{display:flex;flex-direction:column;align-items:center;gap:2px}
+.breathe svg{width:220px;max-width:100%;height:auto;overflow:visible}
+.breathe .bt{fill:none;stroke:var(--line);stroke-width:4;stroke-linecap:round}
+.breathe .bw{fill:none;stroke:var(--pos);stroke-width:4;stroke-linecap:round}
+.breathe circle{fill:var(--primary);filter:drop-shadow(0 0 5px rgba(238,155,91,.7))}
+.breathe p{font:500 1.1rem var(--fd);color:var(--posink);min-height:1.5em;text-align:center}
 @media (prefers-reduced-motion:no-preference){
-  .glide{animation:glide 3s ease-out both}
+  .glide{animation:glide 8s ease-in-out both}
   @keyframes glide{from{transform:translate(180px,60px) scale(.55);opacity:.2}to{transform:translate(180px,108px) scale(1);opacity:1}}
   .breath i{animation:spin 1.2s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -788,9 +794,9 @@ function adlerBody() {
     <p class="eyb" style="text-align:center">Adlerperspektive · ${ED.ai + 1} von ${list.length}</p>
     <div class="sky">${skySVG()}</div>
     ${ED.ai === 0 ? `<h2 style="text-align:center">Atme einmal tief durch.</h2>
+      <div class="breathe" id="breath" ${fresh ? '' : 'hidden'}><svg viewBox="0 0 220 52" aria-hidden="true"><path class="bt" d="M6 44 C 50 44, 70 8, 110 8 S 170 44, 214 44"/><path class="bw" id="bw" d="M6 44 C 50 44, 70 8, 110 8 S 170 44, 214 44"/><circle id="bd" r="6" cx="6" cy="44"/></svg><p id="bt" aria-live="polite">Einatmen …</p></div>
       <p class="muted" style="text-align:center">Stell dir vor, du fliegst mit mir hoch über deinen Tag. Von hier oben sieht vieles anders aus. Lass uns jedes Erlebnis noch einmal in Ruhe betrachten.</p>` : ''}
     <div class="quote2 ${e.type}"><span class="pill" style="align-self:flex-start">${neg ? 'Schweres' : 'Schönes'}</span><small>${esc(fmtDay(e.date))}, ${e.bereich === 'beruflich' ? 'beruflich' : 'privat'} · im Moment gefühlt <b style="color:${neg ? 'var(--negink)' : 'var(--posink)'}">${sgn(e.g)}</b></small><p>${esc(e.text || 'Foto')}</p></div>
-    <div class="breath" id="breath" ${fresh ? '' : 'hidden'}><i></i>Einen Moment …</div>
     <div class="q ${fresh ? 'wait' : ''}" id="a-q"><div class="q-top"><label for="r-${e.id}">Von hier oben: Wie ${neg ? 'relevant ist das' : 'wichtig ist dieser Moment'} für dein Leben, ganzheitlich betrachtet?</label><output class="val r" id="ro-${e.id}">${e.r}</output></div>
       <input type="range" id="r-${e.id}" data-f="r" min="1" max="5" step="1" value="${e.r}" ${fresh ? 'disabled' : ''}>
       <div class="scale"><span>1 Kleinigkeit</span><span>5 sehr ${neg ? 'relevant' : 'wichtig'}</span></div></div>
@@ -801,11 +807,25 @@ function adlerBody() {
 function startBreath() {
   const e = aList()[ED.ai]; if (!e || ED.ai !== 0 || SEEN.has(ED.date)) return;
   SEEN.add(ED.date);
-  setTimeout(() => {
-    const q = $('#a-q'); if (!q) return; q.classList.remove('wait');
-    const r = $('#r-' + e.id), n = $('#a-next'), b = $('#breath');
-    if (r) r.disabled = false; if (n) n.disabled = false; if (b) b.hidden = true;
-  }, 3000);
+  const DUR = 8000, w = $('#bw'), dot = $('#bd'), txt = $('#bt'), L = w ? w.getTotalLength() : 0, t0 = performance.now();
+  if (w) { w.style.strokeDasharray = L; w.style.strokeDashoffset = reduceMotion ? 0 : L; }
+  if (reduceMotion && txt) txt.textContent = 'Atme einmal ruhig ein … und wieder aus.';
+  const tick = now => {
+    if (!document.contains(w)) return;
+    const k = Math.min(1, (now - t0) / DUR);
+    if (!reduceMotion) {
+      const ease = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      w.style.strokeDashoffset = L * (1 - ease);
+      const pt = w.getPointAtLength(L * ease); dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y);
+      txt.textContent = k < .5 ? 'Einatmen …' : '… und ausatmen';
+    }
+    if (k < 1) return requestAnimationFrame(tick);
+    txt.textContent = 'Jetzt schau von oben auf deinen Tag.';
+    const q = $('#a-q'); if (q) q.classList.remove('wait');
+    const r = $('#r-' + e.id), n = $('#a-next');
+    if (r) r.disabled = false; if (n) n.disabled = false;
+  };
+  requestAnimationFrame(tick);
 }
 const eById = id => S.entries.find(e => e.id === id);
 function rerenderCard(e) {
@@ -1111,7 +1131,7 @@ renderers.settings = () => {
         <button class="btn sm danger" id="wipe-yes" style="align-self:flex-start">Endgültig löschen</button></div></details>
     </div>
     ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}
-    <p class="copy">Adlerblick · Version 7 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
+    <p class="copy">Adlerblick · Version 8 · © 2026 Kevin Werner · Alle Rechte vorbehalten</p>`;
   $('#st-name').oninput = ev => { p.name = ev.target.value.trim() || p.name; save(); };
   $('#st-gender').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; p.gender = b.dataset.v; save(); $('#st-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
   $('#bk-save').onclick = async () => {
