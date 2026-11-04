@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Adlerblick – dein persönliches Tagebuch für Schönes und Schweres. Alles bleibt verschlüsselt auf deinem Gerät.">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Adlerblick Tagebuch</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Adlerblick">
+<meta name="theme-color" content="#FFF5E9">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500,100&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Abendsonne: eine helle, warme Spalte (max. 30rem). Schönes = Honiggold, Schweres = Lavendel, Knöpfe = Aprikose, Text = Kakao. Bewusst nur ein (helles) Farbschema. */
+:root{
+  --bg:#FFF5E9; --card:#FFFFFF; --ink:#4A3426; --muted:#7E6555; --line:#F0DCC6;
+  --primary:#EE9B5B; --onp:#3F2618; --primary-soft:#FFEBD9;
+  --pos:#F2C14E; --possoft:#FCEBC4; --posink:#7E520E;
+  --neg:#A79BC0; --negsoft:#ECE7F4; --negink:#56497A;
+  --danger:#A0463A;
+  --eb:#9A6340; --ew:#7E4F33; --belly:#E9C9A4; --blush:#F2A07B; --beak:#F2B233;
+  --fd:"Fraunces", Georgia, "Times New Roman", serif;
+  --fb:"Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --rad:22px; --rad-s:14px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%;
+  padding-left:max(18px, env(safe-area-inset-left, 0px));padding-right:max(18px, env(safe-area-inset-right, 0px))}
+.app{max-width:30rem;margin:0 auto;padding-block:18px 64px}
+h1,h2,h3{font-family:var(--fd);font-weight:500;line-height:1.15;text-wrap:balance;margin:0;font-variation-settings:"SOFT" 100}
+h1{font-size:1.9rem;letter-spacing:-.01em}
+h2{font-size:1.4rem}
+h3{font-size:1.1rem}
+p{margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-s{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+.center{text-align:center;align-items:center}
+.eyb{font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
+.back{background:none;border:0;color:var(--primary);font-weight:800;cursor:pointer;padding:8px 0;font-size:1rem}
+.link{background:none;border:0;color:var(--primary);font-weight:800;cursor:pointer;padding:8px 0}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--rad);padding:16px 20px;font-weight:800;font-size:1.05rem;
+  border:1.5px solid transparent;cursor:pointer;background:var(--primary);color:var(--onp);text-align:center;min-height:56px;width:100%}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.sm{min-height:42px;padding:9px 16px;font-size:.95rem;border-radius:99px;width:auto}
+.btn.danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:default}
+.add{border:2px dashed var(--line);background:transparent;color:var(--primary);border-radius:var(--rad);padding:16px;font-weight:800;cursor:pointer;width:100%;font-size:1rem}
+
+.field{display:flex;flex-direction:column;gap:6px;font-weight:700;font-size:.95rem}
+.inp,textarea,select{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:var(--rad-s);padding:13px 14px;font-size:16px;font-weight:400}
+textarea{resize:vertical;min-height:50px;line-height:1.4;background:var(--bg);border-color:transparent}
+.error{color:var(--danger);font-size:.92rem;font-weight:600}
+.hint{background:var(--possoft);color:var(--posink);border-radius:var(--rad-s);padding:12px 14px;font-size:.92rem}
+.card{background:var(--card);border-radius:var(--rad);padding:16px;display:flex;flex-direction:column;gap:12px}
+
+/* Adler */
+.eagle{display:block;flex-shrink:0}
+.e-s{width:64px;height:64px}.e-m{width:96px;height:96px}.e-l{width:140px;height:140px}
+.bubble{display:flex;gap:8px;align-items:flex-end}
+.bubble .say{background:var(--possoft);border-radius:20px 20px 20px 5px;padding:12px 14px;font-size:.98rem;line-height:1.4}
+.bubble.neg .say{background:var(--negsoft)}
+@media (prefers-reduced-motion:no-preference){
+  .hop{animation:hop .9s ease-in-out 2}
+  @keyframes hop{0%,100%{transform:translateY(0)}35%{transform:translateY(-14px) rotate(-4deg)}65%{transform:translateY(-4px) rotate(3deg)}}
+  .screen{animation:fade .25s ease-out}
+  @keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+}
+
+/* Startseite */
+.greet{display:flex;gap:10px;align-items:flex-end}
+.moment{background:var(--possoft);border-radius:var(--rad);padding:14px;display:flex;flex-direction:column;gap:10px}
+.moment .eyb{color:var(--posink)}
+.moment .quote{font-family:var(--fd);font-size:1.25rem;line-height:1.25;font-variation-settings:"SOFT" 100}
+.moment .why{color:var(--posink);font-size:.95rem}
+.pic{display:block;width:100%;max-width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:calc(var(--rad) - 6px);background:linear-gradient(180deg,#F6B27A,#F9D7A1)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{background:var(--card);border:0;border-radius:18px;padding:13px 11px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;min-width:0;font-weight:800;font-size:.92rem}
+.tile i{width:28px;height:28px;border-radius:9px;display:block}
+.tile small{font-weight:400;color:var(--muted);font-size:.78rem;line-height:1.3}
+.banner{background:var(--card);border-radius:var(--rad);padding:12px 14px;display:flex;gap:12px;align-items:center}
+.banner b{display:block}
+.days{background:var(--card);border-radius:var(--rad);overflow:hidden}
+.dayrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;width:100%}
+.dayrow:last-child{border-bottom:0}
+.counts{display:flex;gap:6px;font-size:.8rem;font-weight:700;flex-shrink:0}
+.cnt{border-radius:99px;padding:3px 9px}
+.cnt.neg{background:var(--negsoft);color:var(--negink)}.cnt.pos{background:var(--possoft);color:var(--posink)}
+
+/* Eintrag */
+.datenav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.datenav button{width:42px;height:42px;border-radius:50%;border:0;background:var(--card);cursor:pointer;font-size:1.2rem;color:var(--ink)}
+.datenav button:disabled{opacity:.3;cursor:default}
+.steps{display:flex;gap:6px;font-size:.78rem;color:var(--muted)}
+.steps span{flex:1;border-top:4px solid var(--line);padding-top:6px;border-radius:2px}
+.steps .on{border-color:var(--primary);color:var(--ink);font-weight:800}
+.opt{display:flex;align-items:center;gap:14px;background:var(--card);border-radius:var(--rad);padding:16px;font-weight:800;font-size:1.05rem;border:2px solid transparent;cursor:pointer;text-align:left;width:100%}
+.opt[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.opt .ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-shrink:0}
+.entry-head{display:flex;justify-content:space-between;align-items:center}
+.pill{font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:4px 11px}
+.neg .pill{background:var(--negsoft);color:var(--negink)}.pos .pill{background:var(--possoft);color:var(--posink)}
+.del{background:none;border:0;color:var(--muted);cursor:pointer;font-size:.85rem;padding:6px}
+.seg{display:inline-flex;align-self:flex-start;background:var(--bg);border-radius:99px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:99px;padding:8px 16px;cursor:pointer;font-weight:800;font-size:.9rem;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.q{display:flex;flex-direction:column;gap:4px}
+.q-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.q label{font-size:.93rem;font-weight:600}
+.val{font-family:var(--fd);font-size:1.7rem;line-height:1;min-width:2.2ch;text-align:right;font-variant-numeric:tabular-nums}
+.neg .val.g{color:var(--negink)}.pos .val.g{color:var(--posink)}.val.r{color:var(--ink)}
+.scale{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:0;--p:50%;--fill:var(--primary)}
+input[type=range]::-webkit-slider-runnable-track{height:10px;border-radius:10px;background:linear-gradient(to right,var(--fill) var(--p),var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:#fff;border:0;margin-top:-9px;box-shadow:0 2px 7px rgba(74,52,38,.3)}
+input[type=range]::-moz-range-track{height:10px;border-radius:10px;background:var(--line)}
+input[type=range]::-moz-range-progress{height:10px;border-radius:10px;background:var(--fill)}
+input[type=range]::-moz-range-thumb{width:28px;height:28px;border-radius:50%;background:#fff;border:0;box-shadow:0 2px 7px rgba(74,52,38,.3)}
+.neg input.g{--fill:var(--neg)}.pos input.g{--fill:var(--pos)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:99px;padding:8px 13px;font-size:.88rem;cursor:pointer;font-weight:800;color:var(--ink)}
+.chip[aria-pressed="true"],.chip.on{background:var(--primary);border-color:var(--primary);color:var(--onp)}
+.flagged{font-size:.88rem;color:var(--negink);font-weight:700}
+.thumb{position:relative}
+.thumb .chip{position:absolute;top:8px;right:8px}
+.statrow{display:flex;gap:10px}
+.stat{flex:1;background:var(--card);border-radius:18px;padding:12px;text-align:center}
+.stat b{display:block;font-family:var(--fd);font-size:1.8rem;font-weight:500;line-height:1.2}
+.stat small{font-size:.78rem;color:var(--muted)}
+
+/* Rückblick */
+.cmp{display:flex;justify-content:space-between;gap:10px;font-size:.88rem;color:var(--muted);background:var(--bg);border-radius:12px;padding:10px 12px;font-variant-numeric:tabular-nums}
+.cmp b{color:var(--ink)}
+.cmp.now{background:var(--possoft);color:var(--posink)}.cmp.now b{color:var(--posink)}
+.celebrate{position:fixed;inset:0;background:rgba(74,52,38,.35);display:flex;align-items:center;justify-content:center;z-index:50;
+  padding:max(18px, env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) max(18px, env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px))}
+.celebrate .box{background:var(--bg);border-radius:28px;padding:24px 20px;max-width:24rem;width:100%;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;position:relative;overflow:hidden}
+.bigval{font-family:var(--fd);font-size:3rem;line-height:1;color:var(--negink);font-variant-numeric:tabular-nums}
+.spark{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--pos);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .spark{animation:spark 1.6s ease-out forwards}
+  @keyframes spark{0%{opacity:0;transform:translate(0,0) scale(.4)}20%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.1)}}
+}
+
+/* Auswertung */
+.bars{display:flex;flex-direction:column;gap:9px}
+.br{display:grid;grid-template-columns:5.5rem minmax(0,1fr) 3rem;gap:8px;align-items:center;font-size:.88rem}
+.br .t{height:14px;border-radius:8px;background:var(--bg);overflow:hidden}.br .t i{display:block;height:100%;border-radius:8px}
+.br b{text-align:right;font-variant-numeric:tabular-nums}
+.verd{font-family:var(--fd);font-size:1.15rem;line-height:1.3;font-variation-settings:"SOFT" 100}
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:440px){.split{grid-template-columns:1fr}}
+.chart-wrap{overflow-x:auto}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--fb)}
+.chart .gp{fill:var(--pos)}.chart .gn{fill:var(--neg)}.chart .ax{stroke:var(--line);stroke-width:1.5}
+.legend{display:flex;gap:14px;font-size:.8rem;color:var(--muted);flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+
+/* Einstellungen */
+.list{background:var(--card);border-radius:var(--rad);overflow:hidden}
+.list details{border-bottom:1px solid var(--line)}
+.list details:last-child{border-bottom:0}
+.list summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 16px;font-weight:700;cursor:pointer}
+.list summary::-webkit-details-marker{display:none}
+.list summary small{display:block;font-weight:400;font-size:.8rem;color:var(--muted)}
+.list summary::after{content:"›";color:var(--muted);font-size:1.3rem;transition:transform .2s}
+.list details[open] summary::after{transform:rotate(90deg)}
+.list .inner{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+.code{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:1.35rem;letter-spacing:.08em;text-align:center;background:var(--card);border:2px dashed var(--primary);border-radius:var(--rad);padding:18px 10px;user-select:all;word-break:break-all}
+.check{display:flex;gap:10px;align-items:center;font-size:1rem}
+.check input{width:24px;height:24px;accent-color:var(--primary);flex-shrink:0}
+ol.howto{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:4px;font-size:.92rem}
+.tag{font-size:.72rem;background:var(--possoft);color:var(--posink);border-radius:99px;padding:2px 8px;font-weight:700}
+
+/* Export */
+.datebar{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:99px;padding:6px;font-weight:800}
+.datebar .a{width:38px;height:38px;border-radius:50%;background:var(--bg);border:0;cursor:pointer;font-size:1.1rem;color:var(--ink)}
+.datebar .a:disabled{opacity:.3;cursor:default}
+.optc{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:18px;padding:14px;border:2px solid transparent;cursor:pointer;text-align:left;width:100%}
+.optc[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft)}
+.optc .rd{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;margin-top:2px;background:#fff}
+.optc[aria-pressed="true"] .rd{border:7px solid var(--primary)}
+.optc b{display:block}.optc small{color:var(--muted);font-size:.85rem;line-height:1.3;display:block}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border-radius:18px;padding:14px;font-weight:700;cursor:pointer}
+input.sw{-webkit-appearance:none;appearance:none;width:52px;height:32px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;flex-shrink:0;margin:0;transition:background .2s}
+input.sw::after{content:"";position:absolute;left:3px;top:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:left .2s}
+input.sw:checked{background:var(--primary)}input.sw:checked::after{left:23px}
+.previews{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.previews img{width:46%;max-width:180px;flex-shrink:0;border-radius:6px;box-shadow:0 4px 14px rgba(74,52,38,.18);background:#fff}
+#pdf-stage{position:fixed;left:-10000px;top:0;width:560px}
+.pg{width:560px;height:792px;background:#fff;padding:34px 36px;display:flex;flex-direction:column;gap:12px;color:var(--ink);font-family:var(--fb);font-size:11px;line-height:1.35}
+.pg .ph{display:flex;align-items:center;gap:10px;border-bottom:2px solid var(--line);padding-bottom:10px}
+.pg .ph svg{width:44px;height:44px}
+.pg .ph h3{font-size:20px;line-height:1.1}
+.pg .ph small{display:block;font-size:10.5px;color:var(--muted)}
+.pg .ph .rt{margin-left:auto;text-align:right;font-size:10.5px;color:var(--muted)}
+.pg .pbody{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.pg .kp{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pg .kp div{background:var(--bg);border-radius:10px;padding:8px;text-align:center}
+.pg .kp b{display:block;font-family:var(--fd);font-weight:500;font-size:22px;line-height:1.2}
+.pg .kp small{font-size:9.5px;color:var(--muted)}
+.pg .sec{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pg .col{display:flex;flex-direction:column;gap:5px}
+.pg .pbr{display:grid;grid-template-columns:58px 1fr 30px;gap:6px;align-items:center}
+.pg .pbr .t{height:10px;border-radius:6px;background:var(--bg);overflow:hidden}.pg .pbr .t i{display:block;height:100%;border-radius:6px}
+.pg .pbr b{text-align:right}
+.pg .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pg .verdp{font-family:var(--fd);font-size:14px;line-height:1.3;background:var(--possoft);border-radius:10px;padding:10px 12px}
+.pg .foot{font-size:8.5px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding-top:8px}
+.pg .mini{display:flex;gap:4px;align-items:center}
+.pg .mini .c{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.pg .mini .u,.pg .mini .d{height:30px;display:flex;justify-content:center;width:100%}.pg .mini .u{align-items:flex-end}.pg .mini .d{align-items:flex-start;border-top:1px solid var(--line)}
+.pg .mini i{width:10px;display:block}.pg .mini small{font-size:8px;color:var(--muted);white-space:nowrap}
+.pg h4{font-family:var(--fd);font-weight:500;font-size:14px;display:flex;justify-content:space-between;align-items:baseline;margin:4px 0 0}
+.pg h4 span{font-family:var(--fb);font-size:9.5px;color:var(--muted);font-weight:400}
+.pg .ent{display:grid;grid-template-columns:62px 1fr auto;gap:8px;align-items:start;padding:6px 8px;border-radius:8px}
+.pg .ent.n{background:var(--negsoft)}.pg .ent.p{background:var(--possoft)}
+.pg .ent .tg{font-size:8.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.pg .ent .tg span{display:block;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted)}
+.pg .ent.n .tg{color:var(--negink)}.pg .ent.p .tg{color:var(--posink)}
+.pg .ent .why{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.pg .ent .num{text-align:right;font-weight:700;white-space:nowrap}
+.pg .ent .num small{display:block;font-weight:400;font-size:9px;color:var(--muted)}
+.pg .thumbp{display:block;width:72px;height:54px;object-fit:cover;border-radius:6px;margin-top:4px;background:var(--line)}
+.pg .best{display:flex;gap:12px;align-items:center;background:var(--possoft);border-radius:10px;padding:10px}
+.pg .best img{width:84px;height:63px;object-fit:cover;border-radius:6px}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+</style>
+</head>
+<body>
+
+
+<div class="app">
+  <div id="fatal" class="hint" hidden></div>
+
+  <section id="s-setup" class="screen stack" hidden>
+    <div class="stack-s center" style="display:flex"><span data-eagle="m"></span>
+      <h1>Hallo! Ich bin dein Adlerblick.</h1>
+      <p class="muted">Erzähl mir kurz, wer du bist.</p></div>
+    <form id="setup-form" class="stack" novalidate>
+      <div class="field"><label for="su-name">Wie heißt du?</label><input class="inp" id="su-name" autocomplete="given-name"></div>
+      <div class="field"><span id="su-g-l">Geschlecht</span>
+        <div class="seg" role="group" aria-labelledby="su-g-l" id="su-gender" style="background:var(--card)">
+          <button type="button" data-v="m" aria-pressed="true">männlich</button><button type="button" data-v="w" aria-pressed="false">weiblich</button><button type="button" data-v="d" aria-pressed="false">divers</button>
+        </div></div>
+      <div class="field"><label for="su-user">Username</label><input class="inp" id="su-user" autocomplete="username" autocapitalize="none"></div>
+      <div class="field"><label for="su-pw">Passwort (mind. 6 Zeichen)</label><input class="inp" id="su-pw" type="password" autocomplete="new-password"></div>
+      <div class="field"><label for="su-pw2">Passwort wiederholen</label><input class="inp" id="su-pw2" type="password" autocomplete="new-password"></div>
+      <p class="hint">Alles bleibt nur auf deinem iPhone und ist verschlüsselt. Niemand sonst kann es lesen.</p>
+      <p id="su-err" class="error" hidden></p>
+      <button class="btn" type="submit">Weiter</button>
+    </form>
+    <div id="demo-box" class="stack-s" hidden>
+      <p class="small muted">Nur für den Test: legt einen Zugang mit acht Wochen Beispieleinträgen an (Username <b>test</b>, Passwort <b>test123</b>).</p>
+      <button id="su-demo" class="btn ghost" type="button">Mit Beispieldaten ausprobieren</button>
+    </div>
+  </section>
+
+  <section id="s-code" class="screen stack" hidden>
+    <div class="bubble" style="margin-top:12px"><span data-eagle="s"></span><p class="say">Ganz wichtig: Mit diesem Code kommst du wieder rein, falls du dein Passwort vergisst.</p></div>
+    <h2>Dein Wiederherstellungscode</h2>
+    <div id="code-box" class="code"></div>
+    <button id="code-copy" class="btn ghost" type="button">Code kopieren</button>
+    <p class="muted">Schreib ihn auf einen Zettel oder speichere ihn an einem sicheren Ort. Ohne ihn kann niemand dein Tagebuch öffnen, auch du nicht.</p>
+    <label class="check"><input type="checkbox" id="code-ok"><span>Ich habe mir den Code notiert.</span></label>
+    <button id="code-go" class="btn" type="button" disabled>Los geht's</button>
+  </section>
+
+  <section id="s-login" class="screen stack" hidden>
+    <div class="stack-s center" style="display:flex;margin-top:24px"><span data-eagle="l" data-mood="calm"></span><h1>Schön, dass du wieder da bist.</h1></div>
+    <form id="login-form" class="stack" novalidate>
+      <div class="field"><label for="li-user">Username</label><input class="inp" id="li-user" autocomplete="username" autocapitalize="none"></div>
+      <div class="field"><label for="li-pw">Passwort</label><input class="inp" id="li-pw" type="password" autocomplete="current-password"></div>
+      <p id="li-err" class="error" hidden></p>
+      <button class="btn" type="submit" id="li-btn">Tagebuch öffnen</button>
+    </form>
+    <button class="link" type="button" data-go="recover">Passwort vergessen?</button>
+  </section>
+
+  <section id="s-recover" class="screen stack" hidden>
+    <div class="topbar"><button class="back" data-go="login">← Zurück</button></div>
+    <h2>Neues Passwort festlegen</h2>
+    <p class="muted">Gib deinen Wiederherstellungscode ein. Danach legst du ein neues Passwort fest.</p>
+    <form id="rec-form" class="stack" novalidate>
+      <div class="field"><label for="rc-code">Wiederherstellungscode</label><input class="inp" id="rc-code" autocapitalize="characters" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
+      <div class="field"><label for="rc-user">Username</label><input class="inp" id="rc-user" autocapitalize="none"></div>
+      <div class="field"><label for="rc-pw">Neues Passwort (mind. 6 Zeichen)</label><input class="inp" id="rc-pw" type="password" autocomplete="new-password"></div>
+      <p id="rc-err" class="error" hidden></p>
+      <button class="btn" type="submit">Passwort speichern</button>
+    </form>
+  </section>
+
+  <section id="s-home" class="screen stack" hidden></section>
+  <section id="s-entry" class="screen stack" hidden></section>
+  <section id="s-thoughts" class="screen stack" hidden></section>
+  <section id="s-review" class="screen stack" hidden></section>
+  <section id="s-stats" class="screen stack" hidden></section>
+  <section id="s-settings" class="screen stack" hidden></section>
+  <section id="s-export" class="screen stack" hidden></section>
+</div>
+<div id="pdf-stage" aria-hidden="true"></div>
+<div id="celebrate" class="celebrate" hidden></div>
+
+<script>
+(() => {
+'use strict';
+/* ---------- Hilfsfunktionen ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2, '0');
+const ds = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (s, n) => { const d = parseD(s); d.setDate(d.getDate()+n); return ds(d); };
+const today = () => ds(new Date());
+const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 864e5);
+const weekKey = s => { const d = parseD(s); d.setDate(d.getDate() - ((d.getDay()+6)%7)); return ds(d); };
+const fmtLong = s => parseD(s).toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
+const fmtShort = s => parseD(s).toLocaleDateString('de-DE', {day:'numeric', month:'short'});
+const fmtDay = s => s === today() ? 'Heute' : s === addDays(today(), -1) ? 'Gestern' : fmtLong(s);
+const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+const sgn = n => n > 0 ? '+' + n : n < 0 ? '−' + Math.abs(n) : '0';
+const ORTE = { home:'Zu Hause', work:'Beruflich unterwegs', trip:'Privat unterwegs / Urlaub' };
+const inFrame = (() => { try { return window.self !== window.top; } catch { return true; } })();
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Adler ---------- */
+function eagle(size = 'm', mood = '', extra = '') {
+  const eyes = mood === 'happy'
+    ? '<path d="M45 45 q5 -6 10 0" stroke="#2B1E17" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M65 45 q5 -6 10 0" stroke="#2B1E17" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    : mood === 'calm'
+    ? '<path d="M45 44 q5 4 10 0" stroke="#2B1E17" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M65 44 q5 4 10 0" stroke="#2B1E17" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    : '<circle cx="50" cy="44" r="5" fill="#2B1E17"/><circle cx="70" cy="44" r="5" fill="#2B1E17"/><circle cx="51.6" cy="42.2" r="1.7" fill="#fff"/><circle cx="71.6" cy="42.2" r="1.7" fill="#fff"/>';
+  const wl = mood === 'happy' ? ' transform="rotate(-22 30 76)"' : '', wr = mood === 'happy' ? ' transform="rotate(22 90 76)"' : '';
+  return `<svg class="eagle e-${size} ${extra}" viewBox="0 0 120 120" aria-hidden="true">
+    <path d="M30 76 q-18 6 -14 30 q16 -2 24 -18z" fill="var(--ew)"${wl}/><path d="M90 76 q18 6 14 30 q-16 -2 -24 -18z" fill="var(--ew)"${wr}/>
+    <ellipse cx="60" cy="84" rx="32" ry="29" fill="var(--eb)"/><ellipse cx="60" cy="92" rx="19" ry="17" fill="var(--belly)"/>
+    <path d="M62 18 q4 -10 12 -8 q-6 4 -4 10z" fill="#FFFDF8"/><circle cx="60" cy="46" r="27" fill="#FFFDF8"/>${eyes}
+    <circle cx="42" cy="54" r="4.5" fill="var(--blush)" opacity=".7"/><circle cx="78" cy="54" r="4.5" fill="var(--blush)" opacity=".7"/>
+    <path d="M53 52 q7 -4 14 0 q-2 9 -7 12 q-5 -3 -7 -12z" fill="var(--beak)"/>
+    <ellipse cx="50" cy="112" rx="7" ry="3.5" fill="var(--beak)"/><ellipse cx="70" cy="112" rx="7" ry="3.5" fill="var(--beak)"/></svg>`;
+}
+document.querySelectorAll('[data-eagle]').forEach(el => { el.outerHTML = eagle(el.dataset.eagle, el.dataset.mood || ''); });
+const say = (text, mood = '', cls = '') => `<div class="bubble ${cls}">${eagle('s', mood)}<p class="say">${text}</p></div>`;
+
+/* ---------- Speicher (IndexedDB, Fallback: Arbeitsspeicher) ---------- */
+const DB = {
+  db: null, mem: new Map(), persistent: true,
+  async open() {
+    try {
+      this.db = await new Promise((res, rej) => {
+        const r = indexedDB.open('adlerblick', 1);
+        r.onupgradeneeded = () => r.result.createObjectStore('kv');
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+      });
+    } catch { this.db = null; this.persistent = false; }
+  },
+  tx(mode, fn) {
+    return new Promise((res, rej) => {
+      const t = this.db.transaction('kv', mode); const r = fn(t.objectStore('kv'));
+      t.oncomplete = () => res(r && r.result); t.onerror = () => rej(t.error);
+    });
+  },
+  async get(k) { if (!this.db) return this.mem.get(k); return this.tx('readonly', s => s.get(k)); },
+  async put(k, v) { if (!this.db) { this.mem.set(k, v); return; } return this.tx('readwrite', s => s.put(v, k)); },
+  async del(k) { if (!this.db) { this.mem.delete(k); return; } return this.tx('readwrite', s => s.delete(k)); },
+  async keys() { if (!this.db) return [...this.mem.keys()]; return this.tx('readonly', s => s.getAllKeys()); },
+  async clear() { if (!this.db) { this.mem.clear(); return; } return this.tx('readwrite', s => s.clear()); }
+};
+
+/* ---------- Verschlüsselung (AES-GCM, Schlüssel aus Username + Passwort via PBKDF2) ---------- */
+const te = new TextEncoder(), td = new TextDecoder();
+const rnd = n => crypto.getRandomValues(new Uint8Array(n));
+async function derive(secret, salt) {
+  const base = await crypto.subtle.importKey('raw', te.encode(secret), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:210000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function encB(key, bytes) { const iv = rnd(12); return { iv, ct: new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, bytes)) }; }
+async function decB(key, box) { return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:box.iv}, key, box.ct)); }
+const importDataKey = raw => crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt','decrypt']);
+const normUser = u => u.trim().toLowerCase();
+const normCode = c => c.toUpperCase().replace(/[^A-Z0-9]/g, '');
+const pwSecret = (u, p) => normUser(u) + '\u0000' + p;
+function makeCode() {
+  const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const b = rnd(16);
+  return [...b].map(x => A[x % A.length]).join('').match(/.{4}/g).join('-');
+}
+
+/* ---------- Zustand ---------- */
+let META = null, KEY = null, S = null, saveT = null, hiddenAt = 0;
+const photoURL = new Map();
+const freshState = (name, gender) => ({ v:2, profile:{ name, gender, created: today() }, days:{}, entries:[], weekFeel:{}, lastBackupMonth:null, backupSnooze:null, lastReview:null, photoTipLast:null });
+async function persist() { if (KEY && S) await DB.put('data', await encB(KEY, te.encode(JSON.stringify(S)))); }
+function save(now) { clearTimeout(saveT); if (now) return persist(); saveT = setTimeout(persist, 250); }
+async function createAccount(name, gender, user, pw) {
+  const raw = rnd(32), code = makeCode(), saltPw = rnd(16), saltRc = rnd(16);
+  const [kPw, kRc] = await Promise.all([derive(pwSecret(user, pw), saltPw), derive(normCode(code), saltRc)]);
+  META = { v:1, saltPw, saltRc, wPw: await encB(kPw, raw), wRc: await encB(kRc, raw) };
+  await DB.clear(); await DB.put('meta', META);
+  KEY = await importDataKey(raw); S = freshState(name, gender); await save(true);
+  return code;
+}
+async function unlock(user, pw) {
+  const raw = await decB(await derive(pwSecret(user, pw), META.saltPw), META.wPw);
+  KEY = await importDataKey(raw);
+  S = JSON.parse(td.decode(await decB(KEY, await DB.get('data'))));
+  S.weekFeel ||= {}; S.days ||= {}; S.entries ||= [];
+}
+async function rewrap(raw, user, pw) {
+  const saltPw = rnd(16); META.saltPw = saltPw; META.wPw = await encB(await derive(pwSecret(user, pw), saltPw), raw); await DB.put('meta', META);
+}
+async function recover(code, user, pw) { await rewrap(await decB(await derive(normCode(code), META.saltRc), META.wRc), user, pw); }
+async function changePw(oldUser, oldPw, newPw) { await rewrap(await decB(await derive(pwSecret(oldUser, oldPw), META.saltPw), META.wPw), oldUser, newPw); }
+function lock() {
+  clearTimeout(saveT); KEY = null; S = null;
+  photoURL.forEach(u => URL.revokeObjectURL(u)); photoURL.clear();
+  $('#li-pw').value = ''; show('login');
+}
+
+/* ---------- Fotos ---------- */
+async function storePhoto(file) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+  const sc = Math.min(1, 1400 / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth*sc); c.height = Math.round(img.naturalHeight*sc);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(img.src);
+  return storeCanvas(c);
+}
+async function storeCanvas(c) {
+  const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.82)); const id = 'p' + uid();
+  await DB.put('photo:' + id, await encB(KEY, new Uint8Array(await blob.arrayBuffer()))); return id;
+}
+async function getPhoto(id) {
+  if (photoURL.has(id)) return photoURL.get(id);
+  const box = await DB.get('photo:' + id); if (!box) return null;
+  const u = URL.createObjectURL(new Blob([await decB(KEY, box)], {type:'image/jpeg'})); photoURL.set(id, u); return u;
+}
+async function hydrate(root) {
+  root.querySelectorAll('input[type=range]').forEach(fill);
+  for (const img of root.querySelectorAll('img[data-photo]')) { try { const u = await getPhoto(img.dataset.photo); if (u) img.src = u; } catch {} }
+}
+function fill(r) { const p = (r.value - r.min) / (r.max - r.min) * 100; r.style.setProperty('--p', p + '%'); }
+document.addEventListener('input', e => { if (e.target.type === 'range') fill(e.target); });
+
+/* ---------- Berechnung ---------- */
+const effG = e => e.g2 ?? e.g, effR = e => e.r2 ?? e.r;
+const weight = e => Math.abs(effG(e)) * effR(e);
+const valid = e => (e.text && e.text.trim()) || e.photoId;
+function salutation() { const { name, gender } = S.profile; return gender === 'm' ? `Lieber ${name}` : gender === 'w' ? `Liebe ${name}` : `Hallo ${name}`; }
+function summarize(list) {
+  const neg = list.filter(e => e.type === 'neg'), pos = list.filter(e => e.type === 'pos');
+  return { nNeg: neg.length, nPos: pos.length, wNeg: neg.reduce((a, e) => a + weight(e), 0), wPos: pos.reduce((a, e) => a + weight(e), 0) };
+}
+const HELP = 'Schaue regelmäßig in deine guten Gedanken und freue dich über diese Erlebnisse. Es ist wichtig, auch die schönen Momente wertzuschätzen und diese nicht so schnell zu vergessen. Sprich sowohl über Gutes als auch über Schlechtes mit deinen vertrauten Personen. Deine Einträge hier helfen dabei, deine Gedanken und Erlebnisse zu ordnen.';
+
+/* ---------- Navigation ---------- */
+const screens = ['setup','code','login','recover','home','entry','thoughts','review','stats','settings','export'];
+const renderers = {};
+function show(name) {
+  screens.forEach(s => { $('#s-' + s).hidden = s !== name; });
+  if (renderers[name]) renderers[name]();
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (!g) return;
+  if (g.dataset.date) ED.date = g.dataset.date;
+  if (g.dataset.go === 'entry') ED.step = g.dataset.step || (S?.days[ED.date]?.ort ? 'neg' : 'ort');
+  show(g.dataset.go);
+});
+const topbar = t => `<div class="topbar"><button class="back" data-go="home">← Start</button><span class="eyb">${esc(t)}</span></div>`;
+const barRow = (label, v, max, color) => `<div class="br"><span>${label}</span><div class="t"><i style="width:${Math.round(v / Math.max(max, 1) * 100)}%;background:${color}"></i></div><b>${v}</b></div>`;
+const ICON = {
+  home: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C9773B" stroke-width="1.8" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>',
+  work: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C9773B" stroke-width="1.8" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  trip: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C9773B" stroke-width="1.8" aria-hidden="true"><circle cx="17" cy="6" r="3"/><path d="M2 20l6-8 4 5 3-3 7 6z"/></svg>'
+};
+
+/* ---------- Startseite ---------- */
+let momentPick = null;
+renderers.home = () => {
+  const el = $('#s-home'), t = today(), month = t.slice(0, 7);
+  const pos = S.entries.filter(e => e.type === 'pos' && valid(e));
+  if (!momentPick || !pos.find(p => p.id === momentPick)) {
+    const withPic = pos.filter(e => e.photoId && weight(e) >= 8), pool = withPic.length ? withPic : pos.filter(e => weight(e) >= 8); const src = pool.length ? pool : pos;
+    momentPick = src.length ? src[Math.floor(Math.random() * src.length)].id : null;
+  }
+  const m = pos.find(p => p.id === momentPick);
+  const todayHas = S.entries.some(e => e.date === t && valid(e));
+  const wk = weekKey(t), isSunday = new Date().getDay() === 0;
+  const needBackup = S.lastBackupMonth !== month && S.backupSnooze !== month && S.profile.created.slice(0, 7) !== month;
+  const isDemo = S.entries.some(e => e.demo);
+  const days = [...new Set(S.entries.filter(valid).map(e => e.date))].sort().reverse().slice(0, 5);
+  el.innerHTML = `
+    <div class="topbar"><span></span><button class="link" data-go="settings">Einstellungen</button></div>
+    <div class="greet">${eagle('m')}<p class="muted" style="padding-bottom:6px">${esc(fmtLong(t))}${isDemo ? ' <span class="tag">Beispieldaten</span>' : ''}</p></div>
+    <h1>Willkommen ${esc(S.profile.name)},<br>wie war dein Tag heute?</h1>
+    ${isSunday && S.lastReview !== wk ? `<button class="banner" data-go="review" style="border:0;text-align:left;cursor:pointer">${eagle('s','calm')}<span><b>Es ist Sonntag.</b><span class="small muted">Schau mit etwas Abstand auf deine Woche zurück.</span></span></button>` : ''}
+    ${needBackup ? `<div class="banner">${eagle('s')}<div class="stack-s" style="flex:1"><b>Neuer Monat, Zeit für deine Sicherung.</b><div class="row"><button class="btn sm" data-go="settings">Sicherung speichern</button><button class="btn sm ghost" id="snooze">Später</button></div></div></div>` : ''}
+    <button class="btn" data-go="entry" data-date="${t}">${todayHas ? 'Heutigen Tag ergänzen' : 'Tag eintragen'}</button>
+    ${m ? `<div class="moment"><span class="eyb">Weißt du noch? · ${esc(fmtShort(m.date))}</span>
+        ${m.photoId ? `<img class="pic" data-photo="${m.photoId}" alt="Foto zu diesem Moment">` : ''}
+        <p class="quote">${esc(m.text)}</p>${m.why ? `<p class="why">${esc(m.why)}</p>` : ''}</div>`
+      : `<div class="moment"><span class="eyb">Deine schönen Momente</span><p>Hier erscheint bald ein schöner Moment aus deinem Tagebuch, gern mit Foto.</p></div>`}
+    <div class="tiles">
+      <button class="tile" data-go="thoughts"><i style="background:var(--pos)"></i>Gute Gedanken<small>Schönste Momente</small></button>
+      <button class="tile" data-go="review"><i style="background:var(--neg)"></i>Rückblick<small>Mit Abstand</small></button>
+      <button class="tile" data-go="stats"><i style="background:var(--primary)"></i>Auswertung<small>Gefühlt und gewichtet</small></button>
+    </div>
+    ${days.length ? `<h3>Deine letzten Tage</h3><div class="days">${days.map(d => {
+      const l = S.entries.filter(e => e.date === d && valid(e)), n = l.filter(e => e.type === 'neg').length;
+      return `<button class="dayrow" data-go="entry" data-date="${d}" data-step="neg"><span><b>${esc(fmtDay(d))}</b><br><span class="small muted">${esc(ORTE[S.days[d]?.ort] || 'Ort nicht angegeben')}</span></span><span class="counts"><span class="cnt neg">${n} schwer</span><span class="cnt pos">${l.length - n} schön</span></span></button>`;
+    }).join('')}</div>` : ''}`;
+  hydrate(el);
+  const sn = $('#snooze', el); if (sn) sn.onclick = () => { S.backupSnooze = month; save(); renderers.home(); };
+};
+
+/* ---------- Tag eintragen ---------- */
+const ED = { date: today(), step: 'ort' };
+const dayEntries = type => S.entries.filter(e => e.date === ED.date && e.type === type);
+function newEntry(type) {
+  const e = { id: uid(), date: ED.date, type, text: '', why: '', bereich: S.days[ED.date]?.ort === 'work' ? 'beruflich' : 'privat', g: type === 'neg' ? -3 : 3, r: 3, created: Date.now() };
+  S.entries.push(e); return e;
+}
+function prune() {
+  S.entries.filter(e => e.date === ED.date && !valid(e)).forEach(e => e.photoId && DB.del('photo:' + e.photoId));
+  S.entries = S.entries.filter(e => !(e.date === ED.date && !valid(e)));
+}
+function photoTip() {
+  const t = today(); if (ED.date !== t) return false;
+  if (S.photoTipLast === t) return true;
+  if (S.photoTipLast && daysBetween(S.photoTipLast, t) < 3) return false;
+  if (S.entries.some(e => e.type === 'pos' && e.photoId && e.date >= addDays(t, -3))) return false;
+  S.photoTipLast = t; save(); return true;
+}
+function entryCard(e) {
+  const neg = e.type === 'neg', a = Math.abs(e.g);
+  return `<article class="card ${e.type}" data-id="${e.id}">
+    <div class="entry-head"><span class="pill">${neg ? 'Schweres' : 'Schönes'}</span><button class="del" data-act="del">Entfernen</button></div>
+    <label class="sr" for="t-${e.id}">Was ist passiert?</label>
+    <textarea id="t-${e.id}" data-f="text" rows="2" placeholder="${neg ? 'Was ist passiert?' : 'Was war schön?'}">${esc(e.text)}</textarea>
+    ${!neg ? `<label class="sr" for="w-${e.id}">Was hat es schön gemacht?</label><textarea id="w-${e.id}" data-f="why" rows="2" placeholder="Was hat es schön gemacht? War jemand dabei? (freiwillig)">${esc(e.why)}</textarea>
+      ${e.photoId ? `<div class="thumb"><img class="pic" data-photo="${e.photoId}" alt="Foto zu diesem Moment"><button class="chip" data-act="rmphoto">Foto entfernen</button></div>` : ''}
+      <label class="btn ghost sm" for="f-${e.id}" style="align-self:flex-start">${e.photoId ? 'Anderes Foto wählen' : 'Foto hinzufügen'}</label>
+      <input type="file" id="f-${e.id}" class="sr" accept="image/*" data-f="photo">` : ''}
+    <div class="seg" role="group" aria-label="Bereich">
+      <button type="button" data-act="bereich" data-v="privat" aria-pressed="${e.bereich === 'privat'}">Privat</button>
+      <button type="button" data-act="bereich" data-v="beruflich" aria-pressed="${e.bereich === 'beruflich'}">Beruflich</button>
+    </div>
+    <div class="q"><div class="q-top"><label for="g-${e.id}">Wie ${neg ? 'negativ' : 'positiv'} hast du dieses Gefühl in dem Moment wahrgenommen?</label><output class="val g" id="go-${e.id}">${sgn(e.g)}</output></div>
+      <input type="range" class="g" id="g-${e.id}" data-f="g" min="1" max="5" step="1" value="${a}">
+      <div class="scale"><span>${neg ? '−1' : '+1'} etwas</span><span>${neg ? '−5' : '+5'} sehr stark</span></div></div>
+    ${neg && a === 5 && e.adler === 'shown' ? `<div class="stack-s">${say('<b>Das klingt gerade sehr intensiv.</b> Schau mal mit mir von oben drauf: Wie wichtig ist das in einem Monat noch?', '', 'neg')}
+      <div class="chips"><button class="chip" data-act="adler-ok">Passt so</button><button class="chip" data-act="adler-adjust">Nochmal einschätzen</button><button class="chip on" data-act="adler-flag">Am Sonntag ansehen</button></div></div>` : ''}
+    ${e.flag ? `<p class="flagged">Gut, das schauen wir uns am Sonntag nochmal gemeinsam an.</p>` : ''}
+    <div class="q"><div class="q-top"><label for="r-${e.id}">Aus der Adlerperspektive: Wie relevant bewertest du dieses Ereignis ganzheitlich für dein Leben?</label><output class="val r" id="ro-${e.id}">${e.r}</output></div>
+      <input type="range" id="r-${e.id}" data-f="r" min="1" max="5" step="1" value="${e.r}">
+      <div class="scale"><span>1 Kleinigkeit</span><span>5 sehr relevant</span></div></div>
+  </article>`;
+}
+renderers.entry = () => {
+  const el = $('#s-entry'), t = today(), day = S.days[ED.date] || {};
+  const idx = { ort:0, neg:1, pos:2, done:3 }[ED.step];
+  let body = '';
+  if (ED.step === 'ort') {
+    body = `${say(`Schön, dass du da bist, ${esc(S.profile.name)}. Wo warst du ${ED.date === t ? 'heute' : 'an diesem Tag'}?`)}
+      ${Object.entries(ORTE).map(([k, v]) => `<button class="opt" data-act="ort" data-v="${k}" aria-pressed="${day.ort === k}"><span class="ic">${ICON[k]}</span><span>${v}</span></button>`).join('')}
+      <button class="btn" data-act="next" data-v="neg" ${day.ort ? '' : 'disabled'}>Weiter</button>`;
+  } else if (ED.step === 'neg' || ED.step === 'pos') {
+    const type = ED.step;
+    if (!dayEntries(type).length && !(type === 'neg' && day.nothingNeg)) newEntry(type);
+    body = type === 'neg'
+      ? `<div class="stack-s"><h2>Was war heute schwer oder ärgerlich?</h2><p class="muted small">Schreib jedes Erlebnis einzeln auf. Ein paar Stichworte reichen.</p></div>`
+      : `<div class="stack-s"><h2>Was war heute schön?</h2><p class="muted small">Auch Kleinigkeiten zählen: Sport, ein nettes Wort, schönes Wetter.</p></div>
+         ${photoTip() ? say('Kleiner Tipp: Wenn das nächste Mal etwas schön ist, knips schnell ein Foto. Dann kannst du den Moment hier festhalten und später wieder anschauen.') : ''}`;
+    body += `<div class="stack" id="cards">${dayEntries(type).map(entryCard).join('')}</div>
+      <button class="add" data-act="add" data-v="${type}">+ Weiteres ${type === 'neg' ? 'Erlebnis' : 'schönes Erlebnis'}</button>`;
+    body += type === 'neg'
+      ? `<button class="btn" data-act="next" data-v="pos">Weiter zu den schönen Momenten</button><button class="btn ghost" data-act="nothing">Heute gab es nichts Negatives</button>`
+      : `<button class="btn" data-act="next" data-v="done">Tag abschließen</button>`;
+  } else {
+    prune(); save();
+    const l = S.entries.filter(e => e.date === ED.date && valid(e));
+    const pos = l.filter(e => e.type === 'pos').sort((a, b) => weight(b) - weight(a)), n = l.length - pos.length;
+    body = `<div class="stack-s center" style="display:flex">${eagle('l', 'happy', 'hop')}
+        <h1>Danke, ${esc(S.profile.name)}.<br>Das war dein Tag.</h1>
+        <p class="muted">${pos.length ? `Du hast ${ED.date === t ? 'heute' : 'an diesem Tag'} ${pos.length === 1 ? 'einen schönen Moment' : pos.length + ' schöne Momente'} festgehalten.` : 'Gut, dass du dir die Zeit genommen hast. Manche Tage sind einfach schwer, und morgen ist ein neuer.'}</p></div>
+      ${pos.length ? `<div class="moment"><span class="eyb">Dein Moment des Tages</span>${pos[0].photoId ? `<img class="pic" data-photo="${pos[0].photoId}" alt="">` : ''}<p class="quote">${esc(pos[0].text)}</p></div>` : ''}
+      <div class="statrow"><div class="stat"><b style="color:var(--negink)">${n}</b><small>${n === 1 ? 'schwerer Moment' : 'schwere Momente'}</small></div><div class="stat"><b style="color:var(--posink)">${pos.length}</b><small>${pos.length === 1 ? 'schöner Moment' : 'schöne Momente'}</small></div></div>
+      <button class="btn" data-go="home">Zur Startseite</button>
+      <button class="btn ghost" data-act="next" data-v="neg">Nochmal bearbeiten</button>`;
+  }
+  el.innerHTML = `${topbar('Tag eintragen')}
+    <div class="datenav"><button data-act="prev" aria-label="Vorheriger Tag">‹</button><b>${esc(fmtDay(ED.date))}${ORTE[day.ort] && idx > 0 ? ` <span class="muted" style="font-weight:400">· ${ORTE[day.ort]}</span>` : ''}</b><button data-act="nextday" aria-label="Nächster Tag" ${ED.date >= t ? 'disabled' : ''}>›</button></div>
+    ${idx < 3 ? `<div class="steps">${['1 · Ort','2 · Schweres','3 · Schönes'].map((s, i) => `<span class="${i === idx ? 'on' : ''}">${s}</span>`).join('')}</div>` : ''}
+    ${body}`;
+  hydrate(el);
+};
+const eById = id => S.entries.find(e => e.id === id);
+function rerenderCard(e) {
+  const old = document.querySelector(`#cards [data-id="${e.id}"]`); if (!old) return;
+  const tmp = document.createElement('div'); tmp.innerHTML = entryCard(e); const n = tmp.firstElementChild;
+  old.replaceWith(n); hydrate(n);
+}
+$('#s-entry').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-act]'); if (!b) return;
+  const act = b.dataset.act, card = b.closest('[data-id]'), e = card && eById(card.dataset.id);
+  if (act === 'ort') { S.days[ED.date] = { ...(S.days[ED.date] || {}), ort: b.dataset.v }; save(); return renderers.entry(); }
+  if (act === 'prev' || act === 'nextday') { prune(); save(); ED.date = addDays(ED.date, act === 'prev' ? -1 : 1); ED.step = S.days[ED.date]?.ort ? 'neg' : 'ort'; return show('entry'); }
+  if (act === 'add') {
+    newEntry(b.dataset.v); if (b.dataset.v === 'neg') S.days[ED.date] = { ...(S.days[ED.date] || {}), nothingNeg:false };
+    save(); renderers.entry(); const cs = document.querySelectorAll('#cards .card'); const last = cs[cs.length - 1];
+    if (last) { last.scrollIntoView({block:'center'}); last.querySelector('textarea')?.focus(); } return;
+  }
+  if (act === 'next') { prune(); save(); ED.step = b.dataset.v; return show('entry'); }
+  if (act === 'nothing') { S.entries = S.entries.filter(x => !(x.date === ED.date && x.type === 'neg' && !valid(x))); S.days[ED.date] = { ...(S.days[ED.date] || {}), nothingNeg:true }; save(); ED.step = 'pos'; return show('entry'); }
+  if (!e) return;
+  if (act === 'del') { if (e.photoId) DB.del('photo:' + e.photoId); S.entries = S.entries.filter(x => x !== e); save(); card.remove(); return; }
+  if (act === 'bereich') { e.bereich = b.dataset.v; save(); card.querySelectorAll('[data-act=bereich]').forEach(x => x.setAttribute('aria-pressed', x === b)); return; }
+  if (act === 'adler-ok') e.adler = 'ok';
+  if (act === 'adler-flag') { e.adler = 'flag'; e.flag = true; }
+  if (act === 'adler-adjust') e.adler = 'adjust';
+  if (act === 'rmphoto') { DB.del('photo:' + e.photoId); e.photoId = null; }
+  save(); rerenderCard(e);
+  if (act === 'adler-adjust') document.getElementById('r-' + e.id)?.focus();
+});
+$('#s-entry').addEventListener('input', ev => {
+  const f = ev.target.dataset.f, card = ev.target.closest('[data-id]'); if (!f || !card) return;
+  const e = eById(card.dataset.id); if (!e) return;
+  if (f === 'text' || f === 'why') e[f] = ev.target.value;
+  if (f === 'g') { const v = +ev.target.value; e.g = e.type === 'neg' ? -v : v; $('#go-' + e.id).textContent = sgn(e.g); }
+  if (f === 'r') { e.r = +ev.target.value; $('#ro-' + e.id).textContent = e.r; }
+  save();
+});
+$('#s-entry').addEventListener('change', async ev => {
+  const f = ev.target.dataset.f, card = ev.target.closest('[data-id]'); if (!f || !card) return;
+  const e = eById(card.dataset.id); if (!e) return;
+  if (f === 'g' && e.type === 'neg' && Math.abs(e.g) === 5 && !['ok','flag'].includes(e.adler)) { e.adler = 'shown'; save(); rerenderCard(e); document.getElementById('g-' + e.id)?.focus(); }
+  if (f === 'photo' && ev.target.files[0]) {
+    try { const old = e.photoId; e.photoId = await storePhoto(ev.target.files[0]); if (old) DB.del('photo:' + old); save(); rerenderCard(e); }
+    catch { const p = document.createElement('p'); p.className = 'error'; p.textContent = 'Das Foto konnte nicht geladen werden. Versuch es mit einem anderen Bild.'; card.appendChild(p); }
+  }
+});
+
+/* ---------- Gute Gedanken ---------- */
+const TH = { i: 0 };
+renderers.thoughts = () => {
+  const el = $('#s-thoughts');
+  const list = S.entries.filter(e => e.type === 'pos' && valid(e)).sort((a, b) => weight(b) - weight(a) || b.date.localeCompare(a.date));
+  if (TH.i >= list.length) TH.i = 0;
+  const e = list[TH.i];
+  el.innerHTML = `${topbar('Gute Gedanken')}
+    <div class="stack-s"><h2>Deine schönsten Momente</h2><p class="muted small">Sortiert nach dem, was dir am meisten bedeutet hat.</p></div>
+    ${e ? `<div class="moment" style="gap:12px">
+        <span class="eyb">${esc(fmtLong(e.date))} · ${e.bereich === 'beruflich' ? 'Beruflich' : 'Privat'}</span>
+        ${e.photoId ? `<img class="pic" data-photo="${e.photoId}" alt="Foto zu diesem Moment">` : ''}
+        <p class="quote" style="font-size:1.45rem">${esc(e.text)}</p>${e.why ? `<p class="why">${esc(e.why)}</p>` : ''}
+        <div class="cmp" style="background:rgba(255,255,255,.6)"><span>Gefühl <b>${sgn(effG(e))}</b></span><span>Relevanz <b>${effR(e)}</b></span><span>Wirkung <b>${sgn(effG(e) * effR(e))}</b></span></div>
+      </div>
+      <p class="small muted" style="text-align:center">${TH.i + 1} von ${list.length}</p>
+      <div class="row" style="flex-wrap:nowrap"><button class="btn ghost" id="th-prev" style="flex:1" aria-label="Vorheriger Moment" ${TH.i === 0 ? 'disabled' : ''}>‹</button><button class="btn" id="th-rand" style="flex:3">Zufälliger Moment</button><button class="btn ghost" id="th-next" style="flex:1" aria-label="Nächster Moment" ${TH.i >= list.length - 1 ? 'disabled' : ''}>›</button></div>`
+    : say('Sobald du schöne Momente einträgst, findest du sie hier wieder.')}`;
+  hydrate(el);
+  const go = i => { TH.i = i; renderers.thoughts(); };
+  if (e) { $('#th-prev', el).onclick = () => go(TH.i - 1); $('#th-next', el).onclick = () => go(TH.i + 1); $('#th-rand', el).onclick = () => go(list.length > 1 ? (TH.i + 1 + Math.floor(Math.random() * (list.length - 1))) % list.length : 0); }
+};
+
+/* ---------- Sonntags-Rückblick ---------- */
+renderers.review = () => {
+  const el = $('#s-review'), t = today(), from = addDays(t, -6), wk = weekKey(t);
+  const week = S.entries.filter(e => e.date >= from && e.date <= t && valid(e));
+  const cand = week.filter(e => Math.abs(e.g) === 5 || e.flag || e.reviewed === wk).sort((a, b) => a.date.localeCompare(b.date));
+  const open = cand.filter(e => e.reviewed !== wk);
+  const e = open[0], done = cand.length - open.length;
+  const feel = S.weekFeel[wk];
+  let part;
+  if (e) {
+    const neg = e.type === 'neg';
+    part = `<div class="card ${e.type}" data-id="${e.id}">
+      <div class="entry-head"><span class="pill">${neg ? 'Schweres' : 'Schönes'}</span><span class="small muted">${esc(fmtDay(e.date))}</span></div>
+      <p style="font-weight:800">${esc(e.text)}</p>
+      <div class="cmp"><span>Damals</span><b>${sgn(e.g)} × ${e.r} = ${sgn(e.g * e.r)}</b></div>
+      <div class="q"><div class="q-top"><label for="rg">Wie ${neg ? 'negativ' : 'positiv'} fühlt es sich heute an?</label><output class="val g" id="rgo">${sgn(effG(e))}</output></div>
+        <input type="range" class="g" id="rg" min="1" max="5" value="${Math.abs(effG(e))}"><div class="scale"><span>${neg ? '−1' : '+1'} etwas</span><span>${neg ? '−5' : '+5'} sehr stark</span></div></div>
+      <div class="q"><div class="q-top"><label for="rr">Aus der Adlerperspektive: Wie relevant ist es heute für dein Leben?</label><output class="val r" id="rro">${effR(e)}</output></div>
+        <input type="range" id="rr" min="1" max="5" value="${effR(e)}"><div class="scale"><span>1 Kleinigkeit</span><span>5 sehr relevant</span></div></div>
+      <div class="cmp now" id="rnow"></div>
+    </div>
+    <button class="btn" id="rv-save">Weiter</button>
+    <p class="small muted" style="text-align:center">${done + 1} von ${cand.length}</p>`;
+  } else {
+    const sm = summarize(week);
+    const best = week.filter(x => x.type === 'pos').sort((a, b) => weight(b) - weight(a))[0];
+    part = `${!cand.length ? `<p class="muted">Diese Woche gab es nichts, das du besonders stark bewertet hast.</p>` : ''}
+      <div class="card"><div class="q"><div class="q-top"><label for="feel" style="font-family:var(--fd);font-size:1.1rem;font-weight:500">Wie war deine Woche, ganz spontan?</label><output class="val r" id="feel-o">${feel == null ? '–' : sgn(feel)}</output></div>
+        <input type="range" id="feel" min="-5" max="5" step="1" value="${feel ?? 0}"><div class="scale"><span>−5 sehr schwer</span><span>+5 sehr schön</span></div></div></div>
+      <div class="card" id="weekcard">${weekCard(sm, feel, best, week.length)}</div>
+      <button class="btn" id="rv-done">Rückblick abschließen</button>`;
+  }
+  el.innerHTML = `${topbar('Sonntags-Rückblick')}
+    ${say(`${esc(salutation())}, lass uns mit etwas Abstand auf deine Woche schauen.`, 'calm')}
+    ${e ? `<p class="muted small">Diese Erlebnisse hast du besonders stark bewertet. Wie siehst du sie heute, ein paar Tage später?</p>` : ''}
+    ${part}`;
+  hydrate(el);
+  if (e) {
+    const neg = e.type === 'neg';
+    const upd = () => { const g = (neg ? -1 : 1) * +$('#rg').value, r = +$('#rr').value;
+      $('#rgo').textContent = sgn(g); $('#rro').textContent = r;
+      const lighter = neg && Math.abs(g * r) < Math.abs(e.g * e.r);
+      $('#rnow').innerHTML = `<span>Heute</span><b>${sgn(g)} × ${r} = ${sgn(g * r)}${lighter ? ' · leichter' : ''}</b>`; };
+    upd(); $('#rg').addEventListener('input', upd); $('#rr').addEventListener('input', upd);
+    $('#rv-save').onclick = () => {
+      const g = (neg ? -1 : 1) * +$('#rg').value, r = +$('#rr').value, was = Math.abs(e.g * e.r);
+      if (g !== e.g) e.g2 = g; else delete e.g2;
+      if (r !== e.r) e.r2 = r; else delete e.r2;
+      e.reviewed = wk; e.flag = false; save();
+      if (neg && Math.abs(g * r) < was) celebrate(e.g * e.r, g * r, renderers.review); else renderers.review();
+    };
+  } else {
+    const fe = $('#feel');
+    fe.addEventListener('input', () => { S.weekFeel[wk] = +fe.value; $('#feel-o').textContent = sgn(+fe.value); save();
+      const best = week.filter(x => x.type === 'pos').sort((a, b) => weight(b) - weight(a))[0];
+      $('#weekcard').innerHTML = weekCard(summarize(week), S.weekFeel[wk], best, week.length); hydrate($('#weekcard')); });
+    $('#rv-done').onclick = () => { S.lastReview = wk; save(); show('home'); };
+  }
+};
+function weekCard(sm, feel, best, n) {
+  if (!n) return `<h3>Deine Woche in Zahlen</h3><p class="muted">Diese Woche hast du noch nichts eingetragen.</p>`;
+  const posWins = sm.wPos >= sm.wNeg;
+  const verdict = posWins ? (sm.nNeg > sm.nPos ? 'Es gab zwar mehr schwere Momente, aber die schönen hatten mehr Auswirkung. Super.' : 'Das war eine gute Woche. Die schönen Momente haben dich positiv beeinflusst.')
+    : 'Diese Woche hat das Schwere mehr gewogen. Das ist völlig in Ordnung, solche Wochen hat jeder einmal.';
+  let gut = '';
+  if (feel != null) gut = feel < 0 && posWins ? `<p>Dein Bauchgefühl sagt <b>${sgn(feel)}</b>, deine Einträge zeigen aber: Das Schöne hat mehr gewogen. Dein Gefühl war strenger als deine Woche.</p>`
+    : (feel >= 0) === posWins ? `<p>Dein Bauchgefühl und deine Einträge sind sich einig.</p>` : '';
+  const mn = Math.max(sm.nNeg, sm.nPos), mw = Math.max(sm.wNeg, sm.wPos);
+  return `<h3>Deine Woche in Zahlen</h3>
+    <div class="bars"><span class="eyb">Anzahl, so wie es sich anfühlt</span>
+      ${barRow('Schweres', sm.nNeg, mn, 'var(--neg)')}${barRow('Schönes', sm.nPos, mn, 'var(--pos)')}
+      <span class="eyb" style="margin-top:4px">Gewicht aus Gefühl × Relevanz</span>
+      ${barRow('Schweres', sm.wNeg, mw, 'var(--neg)')}${barRow('Schönes', sm.wPos, mw, 'var(--pos)')}</div>
+    <p class="verd">${verdict}</p>${gut}
+    ${best ? `<div class="moment"><span class="eyb">Dein schönster Moment der Woche</span>${best.photoId ? `<img class="pic" data-photo="${best.photoId}" alt="">` : ''}<p class="quote">${esc(best.text)}</p></div>` : ''}`;
+}
+function celebrate(from, to, after) {
+  const box = $('#celebrate');
+  box.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="cel-t">${eagle('l', 'happy', 'hop')}
+    <div class="bigval" id="cel-v">${sgn(from)}</div>
+    <p id="cel-t" class="verd">Super! Mit etwas Abstand und aus der Adlerperspektive ist es schon ein Stück besser geworden.</p>
+    <p class="small muted">Vorher ${sgn(from)}, jetzt ${sgn(to)}</p>
+    <button class="btn" id="cel-ok">Weiter</button></div>`;
+  box.hidden = false;
+  const b = $('.box', box);
+  for (let i = 0; i < 18; i++) { const s = document.createElement('i'); s.className = 'spark'; const a = Math.random() * Math.PI * 2, d = 90 + Math.random() * 110;
+    s.style.cssText = `left:50%;top:30%;--dx:${(Math.cos(a) * d).toFixed(0)}px;--dy:${(Math.sin(a) * d).toFixed(0)}px;animation-delay:${(.3 + Math.random() * .4).toFixed(2)}s;${i % 3 ? '' : 'background:var(--primary)'}`; b.appendChild(s); }
+  const v = $('#cel-v'), t0 = performance.now(), dur = reduceMotion ? 0 : 1200;
+  const step = now => { const k = dur ? Math.min(1, Math.max(0, (now - t0 - 300) / dur)) : 1; const x = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+    v.textContent = sgn(x); if (k >= 1) v.style.color = 'var(--posink)'; else requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+  $('#cel-ok').onclick = () => { box.hidden = true; box.innerHTML = ''; after(); };
+  $('#cel-ok').focus();
+}
+
+/* ---------- Auswertung ---------- */
+const F = { range:'30', bereich:'alle', ort:'alle', rel:false };
+renderers.stats = () => {
+  const el = $('#s-stats'), t = today(), all = S.entries.filter(valid);
+  const earliest = all.reduce((m, e) => e.date < m ? e.date : m, t);
+  const from = F.range === 'all' ? earliest : addDays(t, -(+F.range) + 1);
+  const base = all.filter(e => e.date >= from && e.date <= t && (F.ort === 'alle' || S.days[e.date]?.ort === F.ort) && (!F.rel || effR(e) >= 3));
+  const list = base.filter(e => F.bereich === 'alle' || e.bereich === F.bereich);
+  const sm = summarize(list), posWins = sm.wPos >= sm.wNeg;
+  const chip = (k, v, l) => `<button class="chip" data-k="${k}" data-v="${v}" aria-pressed="${String(F[k]) === String(v)}">${l}</button>`;
+  const reviewed = list.filter(e => e.type === 'neg' && (e.g2 != null || e.r2 != null));
+  const before = reviewed.reduce((a, e) => a + Math.abs(e.g) * e.r, 0), after = reviewed.reduce((a, e) => a + weight(e), 0);
+  const split = (keyFn, keys, labels) => keys.map(k => { const s = summarize(base.filter(e => keyFn(e) === k)); const m = Math.max(s.wNeg, s.wPos);
+    return `<div class="card" style="gap:8px"><h3>${labels[k]}</h3><p class="small muted">${s.nNeg} schwere, ${s.nPos} schöne Momente</p><div class="bars">${barRow('Schweres', s.wNeg, m, 'var(--neg)')}${barRow('Schönes', s.wPos, m, 'var(--pos)')}</div></div>`; }).join('');
+  const mn = Math.max(sm.nNeg, sm.nPos), mw = Math.max(sm.wNeg, sm.wPos);
+  el.innerHTML = `${topbar('Auswertung')}
+    <div class="row" style="justify-content:space-between"><h2>Gefühlt und gewichtet</h2><button class="btn sm ghost" data-go="export">Als PDF teilen</button></div>
+    <div class="stack-s">
+      <div class="chips" role="group" aria-label="Zeitraum">${chip('range','7','7 Tage')}${chip('range','30','30 Tage')}${chip('range','90','3 Monate')}${chip('range','180','6 Monate')}${chip('range','all','Alles')}</div>
+      <div class="chips" role="group" aria-label="Bereich">${chip('bereich','alle','Alle')}${chip('bereich','privat','Privat')}${chip('bereich','beruflich','Beruflich')}</div>
+      <div class="chips" role="group" aria-label="Ort">${chip('ort','alle','Alle Orte')}${chip('ort','home','Zu Hause')}${chip('ort','work','Beruflich unterwegs')}${chip('ort','trip','Privat unterwegs')}</div>
+      <div class="chips"><button class="chip" data-k="rel" aria-pressed="${F.rel}">Nur Relevanz ab 3</button></div>
+    </div>
+    ${!list.length ? say('Für diese Auswahl gibt es noch keine Einträge.') : `
+    <div class="card">
+      <p class="small muted">${esc(fmtShort(from))} bis ${esc(fmtShort(t))}</p>
+      <div class="bars"><span class="eyb">Anzahl, so wie es sich anfühlt</span>
+        ${barRow('Schweres', sm.nNeg, mn, 'var(--neg)')}${barRow('Schönes', sm.nPos, mn, 'var(--pos)')}
+        <span class="eyb" style="margin-top:4px">Gewicht aus Gefühl × Relevanz</span>
+        ${barRow('Schweres', sm.wNeg, mw, 'var(--neg)')}${barRow('Schönes', sm.wPos, mw, 'var(--pos)')}</div>
+      <p class="verd">${posWins ? (sm.nNeg > sm.nPos ? `Du hattest ${sm.nNeg} schwere und ${sm.nPos} schöne Momente. Gewichtet haben die schönen trotzdem mehr gewogen.` : 'Das Schöne hat mehr gewogen.')
+        : 'In diesem Zeitraum hat das Schwere mehr gewogen. Das ist in Ordnung und geht jedem mal so.'}</p>
+      ${!posWins ? `<p class="hint">${HELP}</p>` : ''}
+    </div>
+    <div class="card" style="gap:8px"><h3>Verlauf</h3>${trendChart(list, from, t)}</div>
+    ${F.bereich === 'alle' ? `<h3>Privat und beruflich</h3><div class="split">${split(e => e.bereich, ['privat','beruflich'], {privat:'Privat', beruflich:'Beruflich'})}</div>` : ''}
+    ${F.ort === 'alle' ? `<h3>Nach Ort</h3>${split(e => S.days[e.date]?.ort, ['home','work','trip'], ORTE)}` : ''}
+    <div class="card" style="gap:8px"><h3>Mit Abstand betrachtet</h3>
+      ${reviewed.length ? `<p>${reviewed.length} schwere ${reviewed.length === 1 ? 'Erlebnis hast du' : 'Erlebnisse hast du'} im Rückblick neu bewertet. Vorher wogen sie ${before}, jetzt nur noch ${after}.</p>` : `<p class="muted">Sobald du im Sonntags-Rückblick Erlebnisse neu bewertest, siehst du hier, wie sehr sie mit Abstand schrumpfen.</p>`}
+    </div>`}`;
+  el.querySelectorAll('.chip[data-k]').forEach(c => c.onclick = () => { const k = c.dataset.k; F[k] = k === 'rel' ? !F.rel : c.dataset.v; renderers.stats(); });
+};
+function trendChart(list, from, to) {
+  const byWeek = daysBetween(from, to) + 1 > 14, buckets = [];
+  if (byWeek) for (let d = weekKey(from); d <= to; d = addDays(d, 7)) buckets.push({ k: d, label: fmtShort(d), pos: 0, neg: 0 });
+  else for (let d = from; d <= to; d = addDays(d, 1)) buckets.push({ k: d, label: parseD(d).toLocaleDateString('de-DE', {weekday:'short'}), pos: 0, neg: 0 });
+  const idx = new Map(buckets.map((b, i) => [b.k, i]));
+  list.forEach(e => { const b = buckets[idx.get(byWeek ? weekKey(e.date) : e.date)]; if (b) b[e.type] += weight(e); });
+  const max = Math.max(1, ...buckets.map(b => Math.max(b.pos, b.neg)));
+  const W = Math.max(320, buckets.length * 34), H = 210, L = 34, R = 8, T = 12, B = 24, mid = T + (H - T - B) / 2, half = (H - T - B) / 2;
+  const bw = (W - L - R) / buckets.length, barW = Math.min(20, bw * .6), every = Math.ceil(buckets.length / 8);
+  const bars = buckets.map((b, i) => { const x = L + i * bw + (bw - barW) / 2, hp = b.pos / max * half, hn = b.neg / max * half;
+    return `<rect class="gp" x="${x.toFixed(1)}" y="${(mid - hp).toFixed(1)}" width="${barW.toFixed(1)}" height="${hp.toFixed(1)}" rx="4"><title>${b.label}: Schönes ${b.pos}</title></rect>
+      <rect class="gn" x="${x.toFixed(1)}" y="${mid.toFixed(1)}" width="${barW.toFixed(1)}" height="${hn.toFixed(1)}" rx="4"><title>${b.label}: Schweres ${b.neg}</title></rect>
+      ${i % every === 0 ? `<text x="${(x + barW / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle">${esc(b.label)}</text>` : ''}`; }).join('');
+  return `<div class="legend"><span><i style="background:var(--pos)"></i>Schönes</span><span><i style="background:var(--neg)"></i>Schweres</span><span>Gewicht ${byWeek ? 'pro Woche' : 'pro Tag'}</span></div>
+    <div class="chart-wrap"><svg class="chart" viewBox="0 0 ${W} ${H}" width="100%" style="min-width:${Math.min(W, 520)}px" role="img" aria-label="Verlauf von Schönem und Schwerem">
+      <line class="ax" x1="${L}" x2="${W - R}" y1="${mid}" y2="${mid}"/>
+      <text x="${L - 6}" y="${T + 8}" text-anchor="end">+${max}</text><text x="${L - 6}" y="${mid + 4}" text-anchor="end">0</text><text x="${L - 6}" y="${H - B}" text-anchor="end">−${max}</text>
+      ${bars}</svg></div>`;
+}
+
+/* ---------- Einstellungen und Sicherung ---------- */
+const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function exportBackup() {
+  await persist(); const out = {};
+  for (const k of await DB.keys()) out[k] = await DB.get(k);
+  return new Blob([JSON.stringify({ app:'adlerblick', v:1, created: new Date().toISOString(), store: out }, (k, v) => v instanceof Uint8Array ? { __b64: b64(v) } : v)], { type:'application/json' });
+}
+async function importBackup(file) {
+  const data = JSON.parse(await file.text(), (k, v) => v && typeof v === 'object' && typeof v.__b64 === 'string' ? unb64(v.__b64) : v);
+  if (data.app !== 'adlerblick' || !data.store?.meta) throw new Error('bad');
+  await DB.clear(); for (const [k, v] of Object.entries(data.store)) await DB.put(k, v); META = data.store.meta;
+}
+renderers.settings = () => {
+  const el = $('#s-settings'), p = S.profile, month = today().slice(0, 7), isDemo = S.entries.some(e => e.demo);
+  const last = S.lastBackupMonth ? S.lastBackupMonth.split('-').reverse().join('/') : null;
+  el.innerHTML = `${topbar('Einstellungen')}
+    <h2>Einstellungen</h2>
+    ${S.lastBackupMonth !== month ? `<div class="moment" style="flex-direction:row;align-items:center;gap:12px">${eagle('s')}<div><b>Neuer Monat, Zeit für deine Sicherung.</b><p class="small" style="color:var(--posink)">${last ? 'Letzte Sicherung: ' + last : 'Noch keine Sicherung gespeichert.'}</p></div></div>` : ''}
+    <div class="list">
+      <details><summary><span>Über dich<small>${esc(p.name)} · ${{m:'männlich', w:'weiblich', d:'divers'}[p.gender] || ''}</small></span></summary><div class="inner">
+        <div class="field"><label for="st-name">Name</label><input class="inp" id="st-name" value="${esc(p.name)}"></div>
+        <div class="seg" role="group" aria-label="Geschlecht" id="st-gender">${[['m','männlich'],['w','weiblich'],['d','divers']].map(([v, l]) => `<button type="button" data-v="${v}" aria-pressed="${p.gender === v}">${l}</button>`).join('')}</div></div></details>
+      <details><summary><span>Sicherung speichern<small>Verschlüsselt in der Dateien-App</small></span></summary><div class="inner">
+        <p class="small muted">Speichert eine verschlüsselte Kopie deines Tagebuchs in der Dateien-App. Ohne dein Passwort kann niemand sie öffnen.</p>
+        <button class="btn sm" id="bk-save" style="align-self:flex-start">Sicherung speichern</button><p id="bk-msg" class="small" hidden></p></div></details>
+      <details><summary><span>Sicherung wiederherstellen</span></summary><div class="inner">
+        <label class="btn ghost sm" for="bk-file" style="align-self:flex-start">Sicherungsdatei wählen</label><input type="file" id="bk-file" class="sr" accept="application/json,.json">
+        <div id="bk-confirm" class="stack-s" hidden><p class="small">Das ersetzt alle Einträge auf diesem Gerät durch die Sicherung.</p><div class="row"><button class="btn sm danger" id="bk-yes">Ersetzen</button><button class="btn sm ghost" id="bk-no">Abbrechen</button></div></div>
+        <p id="bk-err" class="error" hidden></p></div></details>
+      <details><summary><span>Tägliche Erinnerung<small>Anleitung für Kurzbefehle</small></span></summary><div class="inner">
+        <ol class="howto"><li>Kurzbefehle öffnen, unten <b>Automation</b> wählen, dann <b>+</b>.</li><li><b>Tageszeit</b> wählen, z. B. 20 Uhr, täglich.</li><li><b>Sofort ausführen</b> einstellen.</li><li>Aktion <b>App öffnen</b> wählen: <b>Adlerblick</b>.</li><li>Für den Rückblick eine zweite Automation sonntags anlegen.</li></ol></div></details>
+      <details><summary><span>Passwort ändern</span></summary><div class="inner">
+        <div class="field"><label for="pw-user">Username</label><input class="inp" id="pw-user" autocapitalize="none" autocomplete="username"></div>
+        <div class="field"><label for="pw-old">Aktuelles Passwort</label><input class="inp" id="pw-old" type="password" autocomplete="current-password"></div>
+        <div class="field"><label for="pw-new">Neues Passwort (mind. 6 Zeichen)</label><input class="inp" id="pw-new" type="password" autocomplete="new-password"></div>
+        <button class="btn sm" id="pw-save" style="align-self:flex-start">Passwort ändern</button><p id="pw-msg" class="small" hidden></p></div></details>
+      <details><summary><span>Wenn es mal sehr schwer ist</span></summary><div class="inner">
+        <p class="small">Du musst nicht alles allein tragen. Die Telefonseelsorge ist rund um die Uhr für dich da, kostenlos und anonym:</p>
+        <p style="font-weight:800;font-size:1.15rem;user-select:all">0800 111 0 111</p><p style="font-weight:800;font-size:1.15rem;user-select:all">0800 111 0 222</p>
+        <p class="small muted">Im Notfall wähle die 112.</p></div></details>
+    </div>
+    <div class="list">
+      <details><summary><span>Tagebuch sperren<small>Nach 5 Minuten im Hintergrund sperrt es sich automatisch.</small></span></summary><div class="inner"><button class="btn sm" id="lock-btn" style="align-self:flex-start">Jetzt sperren</button></div></details>
+      ${inFrame || isDemo || location.protocol === 'file:' ? `<details><summary><span>Beispieldaten<small>Nur zum Testen</small></span></summary><div class="inner">${isDemo ? '<button class="btn sm ghost" id="demo-rm" style="align-self:flex-start">Beispieldaten entfernen</button>' : '<button class="btn sm ghost" id="demo-add" style="align-self:flex-start">Beispieldaten laden</button>'}</div></details>` : ''}
+      <details><summary><span style="color:var(--danger)">Alles löschen</span></summary><div class="inner">
+        <p class="small">Wirklich alles löschen? Dein Tagebuch, alle Fotos und dein Zugang sind danach weg. Das lässt sich nicht rückgängig machen.</p>
+        <button class="btn sm danger" id="wipe-yes" style="align-self:flex-start">Endgültig löschen</button></div></details>
+    </div>
+    ${DB.persistent ? '' : '<p class="small muted">Hinweis: Dieser Browser erlaubt hier keinen dauerhaften Speicher.</p>'}`;
+  $('#st-name').oninput = ev => { p.name = ev.target.value.trim() || p.name; save(); };
+  $('#st-gender').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; p.gender = b.dataset.v; save(); $('#st-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); };
+  $('#bk-save').onclick = async () => {
+    const msg = $('#bk-msg'), blob = await exportBackup(); msg.hidden = false;
+    if (inFrame) msg.textContent = 'In dieser Testvorschau kann keine Datei gespeichert werden. In der fertigen App landet die Sicherung in der Dateien-App.';
+    else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `adlerblick-sicherung-${today()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); msg.textContent = 'Sicherung gespeichert.'; }
+    S.lastBackupMonth = month; save();
+  };
+  let pending = null;
+  $('#bk-file').onchange = ev => { pending = ev.target.files[0]; $('#bk-confirm').hidden = !pending; };
+  $('#bk-no').onclick = () => { pending = null; $('#bk-confirm').hidden = true; $('#bk-file').value = ''; };
+  $('#bk-yes').onclick = async () => { try { await importBackup(pending); lock(); } catch { const e = $('#bk-err'); e.hidden = false; e.textContent = 'Diese Datei ist keine gültige Adlerblick-Sicherung.'; $('#bk-confirm').hidden = true; } };
+  $('#pw-save').onclick = async () => {
+    const m = $('#pw-msg'), np = $('#pw-new').value; m.hidden = false; m.className = 'small';
+    if (np.length < 6) { m.className = 'error'; m.textContent = 'Das neue Passwort braucht mindestens 6 Zeichen.'; return; }
+    try { await changePw($('#pw-user').value, $('#pw-old').value, np); m.textContent = 'Passwort geändert.'; ['#pw-old','#pw-new'].forEach(s => $(s).value = ''); }
+    catch { m.className = 'error'; m.textContent = 'Username oder aktuelles Passwort stimmen nicht.'; }
+  };
+  $('#lock-btn').onclick = lock;
+  const da = $('#demo-add'); if (da) da.onclick = async () => { da.disabled = true; da.textContent = 'Wird geladen …'; await seedDemo(); renderers.settings(); };
+  const dr = $('#demo-rm'); if (dr) dr.onclick = () => { S.entries.filter(e => e.demo && e.photoId).forEach(e => DB.del('photo:' + e.photoId)); S.entries = S.entries.filter(e => !e.demo); Object.keys(S.days).forEach(d => S.days[d].demo && delete S.days[d]); S.weekFeel = {}; momentPick = null; save(); renderers.settings(); };
+  $('#wipe-yes').onclick = async () => { await DB.clear(); META = null; KEY = null; S = null; show('setup'); };
+};
+
+/* ---------- Export als PDF ---------- */
+const EX = { range:'week', off:0, mode:'detail', photos:true, file:null };
+const fmtFull = s => parseD(s).toLocaleDateString('de-DE', {day:'numeric', month:'long', year:'numeric'});
+function exPeriod() {
+  const t = today(); let from, to, title, label;
+  if (EX.range === 'day') { from = to = addDays(t, EX.off); title = 'Tagesbericht'; label = fmtDay(from); }
+  else if (EX.range === 'week') { from = addDays(weekKey(t), 7 * EX.off); to = addDays(from, 6); title = 'Wochenbericht'; label = `${fmtShort(from)} – ${fmtShort(to)}`; }
+  else { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + EX.off); from = ds(d); to = ds(new Date(d.getFullYear(), d.getMonth() + 1, 0)); title = 'Monatsbericht'; label = d.toLocaleDateString('de-DE', {month:'long', year:'numeric'}); }
+  const range = from === to ? fmtFull(from) : `${fmtFull(from)} bis ${fmtFull(to)}`;
+  return { from, to, title, label, range };
+}
+const inPeriod = (P) => S.entries.filter(e => valid(e) && e.date >= P.from && e.date <= P.to);
+renderers.export = () => {
+  const el = $('#s-export'), P = exPeriod(), n = inPeriod(P).length;
+  const chip = (v, l) => `<button class="chip" data-r="${v}" aria-pressed="${EX.range === v}">${l}</button>`;
+  const opt = (v, b, s) => `<button class="optc" data-m="${v}" aria-pressed="${EX.mode === v}"><span class="rd"></span><span><b>${b}</b><small>${s}</small></span></button>`;
+  el.innerHTML = `<div class="topbar"><button class="back" data-go="stats">← Auswertung</button><span class="eyb">Als PDF teilen</span></div>
+    <h2>${{day:'Tag', week:'Woche', month:'Monat'}[EX.range]} als PDF teilen</h2>
+    <div class="chips">${chip('day','Tag')}${chip('week','Woche')}${chip('month','Monat')}</div>
+    <div class="datebar"><button class="a" data-x="-1" aria-label="Früher">‹</button><span>${esc(P.label)}</span><button class="a" data-x="1" aria-label="Später" ${EX.off >= 0 ? 'disabled' : ''}>›</button></div>
+    <span class="eyb">Umfang</span>
+    ${opt('overview', 'Übersicht', 'Zahlen, Balken, Verlauf und Fazit auf einer Seite')}
+    ${opt('detail', 'Detailliert', 'Übersicht plus alle Einträge mit Text und Bewertung')}
+    <label class="tog" for="ex-photos"><span>Fotos der schönen Momente</span><input type="checkbox" class="sw" id="ex-photos" ${EX.photos ? 'checked' : ''}></label>
+    ${say('Dieses PDF enthält deine persönlichen Einträge. Teile es nur mit Menschen, denen du vertraust.', 'calm')}
+    <p class="small muted">${n ? `${n} ${n === 1 ? 'Eintrag' : 'Einträge'} in diesem Zeitraum` : 'In diesem Zeitraum gibt es noch keine Einträge.'}</p>
+    <button class="btn" id="ex-make" ${n ? '' : 'disabled'}>PDF erstellen</button>
+    <p id="ex-msg" class="small" hidden></p>
+    <div id="ex-result" class="stack-s" hidden></div>`;
+  el.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { EX.range = b.dataset.r; EX.off = 0; renderers.export(); });
+  el.querySelectorAll('[data-x]').forEach(b => b.onclick = () => { EX.off = Math.min(0, EX.off + +b.dataset.x); renderers.export(); });
+  el.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { EX.mode = b.dataset.m; renderers.export(); });
+  $('#ex-photos').onchange = ev => { EX.photos = ev.target.checked; };
+  $('#ex-make').onclick = makePdf;
+};
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+async function loadLibs() {
+  if (!window.html2canvas) await loadScript('libs/html2canvas.min.js');
+  if (!window.jspdf) await loadScript('libs/jspdf.umd.min.js');
+}
+const pbar = (l, v, m, c) => `<div class="pbr"><span>${l}</span><div class="t"><i style="width:${Math.round(v / Math.max(m, 1) * 100)}%;background:${c}"></i></div><b>${v}</b></div>`;
+function pageShell(P, sub) {
+  const d = document.createElement('div'); d.className = 'pg';
+  const cs = getComputedStyle(document.documentElement);
+  const bird = eagle('s').replace(/var\(--(\w+)\)/g, (m, k) => cs.getPropertyValue('--' + k).trim());
+  d.innerHTML = `<div class="ph">${bird}<div><h3>${P.title} · ${sub}</h3><small>${esc(S.profile.name)} · ${esc(P.range)}</small></div><div class="rt">Adlerblick<br>Tagebuch</div></div>
+    <div class="pbody"></div><div class="foot"><span>Erstellt mit Adlerblick am ${fmtFull(today())} · Persönliche Einträge, bitte vertraulich behandeln</span><span class="pn"></span></div>`;
+  $('#pdf-stage').appendChild(d); return d;
+}
+function overviewHTML(P, list) {
+  const sm = summarize(list), posWins = sm.wPos >= sm.wNeg, mn = Math.max(sm.nNeg, sm.nPos), mw = Math.max(sm.wNeg, sm.wPos);
+  const verdict = posWins ? (sm.nNeg > sm.nPos ? 'Es gab zwar mehr schwere Momente, aber die schönen hatten mehr Auswirkung.' : 'Die schönen Momente haben mehr gewogen.') : 'In diesem Zeitraum hat das Schwere mehr gewogen.';
+  let trend = '';
+  if (P.from !== P.to) {
+    const buckets = [];
+    if (EX.range === 'week') for (let d = P.from; d <= P.to; d = addDays(d, 1)) buckets.push({ k: d, l: parseD(d).toLocaleDateString('de-DE', {weekday:'short'}), pos: 0, neg: 0, key: x => x.date });
+    else for (let d = weekKey(P.from); d <= P.to; d = addDays(d, 7)) buckets.push({ k: d, l: fmtShort(d < P.from ? P.from : d), pos: 0, neg: 0, key: x => weekKey(x.date) });
+    list.forEach(e => { const b = buckets.find(b => b.k === b.key(e)); if (b) b[e.type] += weight(e); });
+    const mx = Math.max(1, ...buckets.map(b => Math.max(b.pos, b.neg)));
+    trend = `<div class="col"><span class="sec">Verlauf ${EX.range === 'week' ? 'pro Tag' : 'pro Woche'} (Gewicht)</span><div class="mini">${buckets.map(b => `<div class="c"><div class="u"><i style="height:${Math.round(b.pos / mx * 30)}px;background:var(--pos);border-radius:3px 3px 0 0"></i></div><div class="d"><i style="height:${Math.round(b.neg / mx * 30)}px;background:var(--neg);border-radius:0 0 3px 3px"></i></div><small>${esc(b.l)}</small></div>`).join('')}</div></div>`;
+  }
+  const part = k => summarize(list.filter(e => e.bereich === k));
+  const pr = part('privat'), be = part('beruflich');
+  const days = Object.entries(S.days).filter(([d, v]) => d >= P.from && d <= P.to && v.ort);
+  const orte = Object.keys(ORTE).map(k => [k, days.filter(([, v]) => v.ort === k).length]).filter(([, c]) => c);
+  const feels = Object.entries(S.weekFeel).filter(([w]) => w >= weekKey(P.from) && w <= P.to).map(([, v]) => v);
+  const feel = feels.length ? Math.round(feels.reduce((a, b) => a + b, 0) / feels.length) : null;
+  const rev = list.filter(e => e.type === 'neg' && (e.g2 != null || e.r2 != null));
+  const before = rev.reduce((a, e) => a + Math.abs(e.g) * e.r, 0), after = rev.reduce((a, e) => a + weight(e), 0);
+  const best = list.filter(e => e.type === 'pos').sort((a, b) => weight(b) - weight(a))[0];
+  return `<div class="kp"><div><b style="color:var(--negink)">${sm.nNeg}</b><small>schwere Momente</small></div><div><b style="color:var(--posink)">${sm.nPos}</b><small>schöne Momente</small></div><div><b style="color:var(--negink)">${sm.wNeg}</b><small>Gewicht Schweres</small></div><div><b style="color:var(--posink)">${sm.wPos}</b><small>Gewicht Schönes</small></div></div>
+    <div class="verdp">${verdict}</div>
+    <div class="two"><div class="col"><span class="sec">Anzahl, so wie es sich anfühlt</span>${pbar('Schweres', sm.nNeg, mn, 'var(--neg)')}${pbar('Schönes', sm.nPos, mn, 'var(--pos)')}
+      <span class="sec" style="margin-top:6px">Gewicht aus Gefühl × Relevanz</span>${pbar('Schweres', sm.wNeg, mw, 'var(--neg)')}${pbar('Schönes', sm.wPos, mw, 'var(--pos)')}</div>${trend || '<div></div>'}</div>
+    <div class="two"><div class="col"><span class="sec">Privat (Gewicht)</span>${pbar('Schweres', pr.wNeg, Math.max(pr.wNeg, pr.wPos), 'var(--neg)')}${pbar('Schönes', pr.wPos, Math.max(pr.wNeg, pr.wPos), 'var(--pos)')}</div>
+      <div class="col"><span class="sec">Beruflich (Gewicht)</span>${pbar('Schweres', be.wNeg, Math.max(be.wNeg, be.wPos), 'var(--neg)')}${pbar('Schönes', be.wPos, Math.max(be.wNeg, be.wPos), 'var(--pos)')}</div></div>
+    <div class="two"><div class="col"><span class="sec">Orte</span>${orte.length ? orte.map(([k, c]) => `<span>${ORTE[k]}: ${c} ${c === 1 ? 'Tag' : 'Tage'}</span>`).join('') : '<span>Keine Angabe</span>'}</div>
+      <div class="col"><span class="sec">Bauchgefühl und Einträge</span>${feel != null ? `<span>Bauchgefühl im Rückblick: <b>${sgn(feel)}</b></span>` : '<span>Kein Bauchgefühl erfasst</span>'}<span>Einträge: ${posWins ? 'Schönes wog mehr' : 'Schweres wog mehr'}</span></div></div>
+    ${rev.length ? `<div class="col"><span class="sec">Mit Abstand betrachtet</span><span>${rev.length} schwere ${rev.length === 1 ? 'Erlebnis' : 'Erlebnisse'} im Rückblick neu bewertet: vorher Gewicht <b>${before}</b>, jetzt <b>${after}</b>.</span></div>` : ''}
+    ${best ? `<div class="best">${EX.photos && best.photoId ? `<img data-photo="${best.photoId}" alt="">` : ''}<div><span class="sec" style="color:var(--posink)">Schönster Moment</span><p style="font-family:var(--fd);font-size:14px">${esc(best.text)}</p>${best.why ? `<p style="color:var(--posink)">${esc(best.why)}</p>` : ''}</div></div>` : ''}`;
+}
+function entHTML(e) {
+  const neg = e.type === 'neg', rv = e.g2 != null || e.r2 != null;
+  return `<div class="ent ${neg ? 'n' : 'p'}"><span class="tg">${neg ? 'Schweres' : 'Schönes'}<span>${e.bereich === 'beruflich' ? 'Beruflich' : 'Privat'}</span></span>
+    <span>${esc(e.text)}${e.why ? `<span class="why">${esc(e.why)}</span>` : ''}${EX.photos && e.photoId ? `<img class="thumbp" data-photo="${e.photoId}" alt="">` : ''}</span>
+    <span class="num">${sgn(e.g)} × ${e.r} = ${sgn(e.g * e.r)}${rv ? `<small>Rückblick: ${sgn(effG(e))} × ${effR(e)} = ${sgn(effG(e) * effR(e))}</small>` : ''}</span></div>`;
+}
+const dayHead = (d, cont) => `<h4>${esc(fmtLong(d))}${cont ? ' (Fortsetzung)' : ''}<span>${esc(ORTE[S.days[d]?.ort] || '')}</span></h4>`;
+function buildPages(P, list) {
+  const stage = $('#pdf-stage'); stage.innerHTML = '';
+  const first = pageShell(P, 'Übersicht'); first.querySelector('.pbody').innerHTML = overviewHTML(P, list);
+  const pages = [first];
+  if (EX.mode === 'detail') {
+    let body = null;
+    const newPage = () => { const p = pageShell(P, 'Einträge'); pages.push(p); body = p.querySelector('.pbody'); };
+    const frag = h => { const t = document.createElement('div'); t.innerHTML = h; return t.firstElementChild; };
+    newPage();
+    const daysList = [...new Set(list.map(e => e.date))].sort();
+    for (const d of daysList) {
+      const items = [{ h: dayHead(d), head: true }, ...list.filter(e => e.date === d).sort((a, b) => (a.type === 'neg' ? 0 : 1) - (b.type === 'neg' ? 0 : 1)).map(e => ({ h: entHTML(e) }))];
+      for (const it of items) {
+        const node = frag(it.h); body.appendChild(node);
+        if (body.scrollHeight > body.clientHeight + 1 && body.children.length > 1) {
+          node.remove(); const prevLast = body.lastElementChild;
+          const orphan = !it.head && prevLast && prevLast.tagName === 'H4';
+          if (orphan) prevLast.remove();
+          newPage();
+          if (orphan) body.appendChild(prevLast); else if (!it.head) body.appendChild(frag(dayHead(d, true)));
+          body.appendChild(node);
+        }
+      }
+    }
+  }
+  pages.forEach((p, i) => { p.querySelector('.pn').textContent = `Seite ${i + 1} von ${pages.length}`; });
+  return pages;
+}
+async function makePdf() {
+  const msg = $('#ex-msg'), btn = $('#ex-make'), res = $('#ex-result');
+  msg.hidden = false; msg.className = 'small'; msg.textContent = 'PDF wird erstellt …'; btn.disabled = true; res.hidden = true;
+  try { await loadLibs(); }
+  catch { msg.className = 'error'; msg.textContent = 'Das PDF konnte nicht vorbereitet werden. Bitte schließ die App einmal und versuch es nochmal.'; btn.disabled = false; return; }
+  try {
+    const P = exPeriod(), list = inPeriod(P), pages = buildPages(P, list);
+    for (const img of $('#pdf-stage').querySelectorAll('img[data-photo]')) { try { img.src = await getPhoto(img.dataset.photo); await img.decode(); } catch {} }
+    if (document.fonts?.ready) await document.fonts.ready;
+    const pdf = new window.jspdf.jsPDF({ unit:'pt', format:'a4' }), previews = [];
+    for (let i = 0; i < pages.length; i++) {
+      msg.textContent = `PDF wird erstellt … Seite ${i + 1} von ${pages.length}`;
+      const c = await window.html2canvas(pages[i], { scale:2, backgroundColor:'#ffffff', logging:false });
+      const url = c.toDataURL('image/jpeg', 0.88);
+      if (i) pdf.addPage();
+      pdf.addImage(url, 'JPEG', 0, 0, 595.28, 841.89);
+      if (i < 4) previews.push(url);
+    }
+    $('#pdf-stage').innerHTML = '';
+    const name = `Adlerblick_${P.title}_${P.from}.pdf`;
+    EX.file = new File([pdf.output('blob')], name, { type:'application/pdf' });
+    msg.textContent = `Fertig: ${pages.length} ${pages.length === 1 ? 'Seite' : 'Seiten'}.`;
+    res.hidden = false;
+    res.innerHTML = `<div class="previews">${previews.map((u, i) => `<img src="${u}" alt="Vorschau Seite ${i + 1}">`).join('')}</div>
+      ${inFrame ? '<p class="hint">In dieser Testvorschau kann das PDF nicht geteilt werden. Oben siehst du, wie es aussieht. In der fertigen App öffnet sich hier das Teilen-Menü.</p>'
+        : '<button class="btn" id="ex-share">PDF teilen</button>'}`;
+    const sh = $('#ex-share'); if (sh) sh.onclick = sharePdf;
+  } catch (err) { msg.className = 'error'; msg.textContent = 'Das PDF konnte nicht erstellt werden. Bitte versuch es nochmal.'; $('#pdf-stage').innerHTML = ''; }
+  btn.disabled = false;
+}
+async function sharePdf() {
+  const f = EX.file; if (!f) return;
+  if (navigator.canShare && navigator.canShare({ files:[f] })) {
+    try { await navigator.share({ files:[f], title: f.name }); } catch {}
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+
+/* ---------- Beispieldaten (nur zum Testen) ---------- */
+async function seedDemo() {
+  let seed = 7; const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647; const pick = a => a[Math.floor(r() * a.length)];
+  const T = {
+    negP: ['Streit über eine Kleinigkeit beim Abendessen','Paket kam wieder nicht an','Schlecht geschlafen','Waschmaschine ausgelaufen','Handwerkertermin geplatzt','Ärger mit dem Nachbarn wegen des Parkplatzes','Im Regen nass geworden','Handydisplay gesprungen'],
+    negB: ['Meeting lief zäh und ohne Ergebnis','Kritik vom Chef vor dem Team','Zug 40 Minuten Verspätung','Hotelzimmer laut und klein','Präsentation wurde verschoben','E-Mail-Flut am Morgen','Kunde hat kurzfristig abgesagt','Ärger mit dem Kunden am Telefon'],
+    posP: ['Abendessen mit alten Freunden','Langer Spaziergang im Wald bei Sonne','Telefonat mit meiner Schwester','Neues Rezept ausprobiert, richtig gut','Kinoabend','Fahrradtour am See','Ausgeschlafen, Kaffee auf dem Balkon','Konzert besucht','Laufrunde bei Sonnenuntergang'],
+    posB: ['Lob vom Kunden für das Projekt','Kollege hat mir spontan geholfen','Präsentation lief richtig gut','Schönes Abendessen mit dem Team auf Dienstreise','Projekt erfolgreich abgeschlossen'],
+    why: ['Wir haben so viel gelacht.','Ich hatte endlich mal Ruhe im Kopf.','Ich habe gemerkt, dass ich gebraucht werde.','Die Sonne kam genau im richtigen Moment raus.','']
+  };
+  const t = today(), add = [];
+  for (let i = 55; i >= 1; i--) {
+    const d = addDays(t, -i), cyc = i % 14, ort = cyc >= 9 && cyc <= 11 ? 'work' : (i >= 20 && i <= 23 ? 'trip' : 'home');
+    S.days[d] = { ort, demo: true };
+    const nNeg = 1 + Math.floor(r() * (ort === 'work' ? 4 : 3)), nPos = 1 + Math.floor(r() * 2);
+    for (let j = 0; j < nNeg; j++) {
+      const b = ort === 'work' ? (r() < .8 ? 'beruflich' : 'privat') : (r() < .45 ? 'beruflich' : 'privat');
+      const g = -pick([2,2,3,3,3,4,4,5]), rel = pick([1,1,1,2,2,2,3,4]);
+      const e = { id: uid(), date: d, type:'neg', text: pick(b === 'beruflich' ? T.negB : T.negP), why:'', bereich:b, g, r: rel, demo:true };
+      if (i > 6 && Math.abs(g) >= 4 && r() < .65) { e.g2 = Math.min(-1, g + 2); e.r2 = Math.max(1, rel - 1); e.reviewed = weekKey(addDays(d, 6)); }
+      if (i <= 6 && g === -5) e.flag = true;
+      add.push(e);
+    }
+    for (let j = 0; j < nPos; j++) {
+      const b = ort === 'work' ? (r() < .6 ? 'beruflich' : 'privat') : (r() < .25 ? 'beruflich' : 'privat');
+      add.push({ id: uid(), date: d, type:'pos', text: pick(b === 'beruflich' ? T.posB : T.posP), why: pick(T.why), bereich:b, g: pick([3,4,4,5,5]), r: pick([2,3,3,4,4,5]), demo:true });
+    }
+  }
+  if (!add.some(e => e.date >= addDays(t, -6) && e.type === 'neg' && e.g === -5)) { const e = add.find(x => x.date === addDays(t, -2) && x.type === 'neg'); if (e) { e.g = -5; e.r = 4; e.flag = true; } }
+  const tops = add.filter(e => e.type === 'pos' && e.bereich === 'privat').sort((a, b) => b.g * b.r - a.g * a.r).slice(0, 7);
+  const pal = [['#F6B27A','#F9D7A1','#C9845A'],['#F3C98F','#FBE3BC','#9FB58A'],['#EFA98C','#F6D3B5','#B7795A'],['#F7C77E','#FCE6BE','#8FA77A'],['#F2B38E','#F9DCC0','#A9876B'],['#F5BE84','#FBE0B6','#93A88A'],['#F0A880','#F8D5B4','#C08360']];
+  for (let k = 0; k < tops.length; k++) {
+    const [a, b, c] = pal[k], cv = document.createElement('canvas'); cv.width = 800; cv.height = 600; const x = cv.getContext('2d');
+    const gr = x.createLinearGradient(0, 0, 0, 600); gr.addColorStop(0, a); gr.addColorStop(1, b); x.fillStyle = gr; x.fillRect(0, 0, 800, 600);
+    x.fillStyle = 'rgba(255,248,225,.92)'; x.beginPath(); x.arc(560 - k * 45, 210 + k * 8, 72, 0, 7); x.fill();
+    x.fillStyle = c; x.beginPath(); x.moveTo(0, 470); for (let px = 0; px <= 800; px += 40) x.lineTo(px, 440 + Math.sin(px / 110 + k) * 36); x.lineTo(800, 600); x.lineTo(0, 600); x.fill();
+    tops[k].photoId = await storeCanvas(cv);
+  }
+  S.weekFeel[weekKey(addDays(t, -7))] = -3;
+  S.entries.push(...add); momentPick = null; await save(true);
+}
+
+/* ---------- Formulare ---------- */
+function showErr(id, msg) { const e = $(id); e.textContent = msg; e.hidden = !msg; }
+let pendingCode = '', setupGender = 'm';
+$('#su-gender').addEventListener('click', ev => { const b = ev.target.closest('button'); if (!b) return; setupGender = b.dataset.v; $('#su-gender').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b)); });
+$('#setup-form').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const name = $('#su-name').value.trim(), user = $('#su-user').value.trim(), pw = $('#su-pw').value, pw2 = $('#su-pw2').value;
+  if (!name) return showErr('#su-err', 'Bitte gib deinen Namen ein.');
+  if (user.length < 3) return showErr('#su-err', 'Der Username braucht mindestens 3 Zeichen.');
+  if (pw.length < 6) return showErr('#su-err', 'Das Passwort braucht mindestens 6 Zeichen.');
+  if (pw !== pw2) return showErr('#su-err', 'Die beiden Passwörter stimmen nicht überein.');
+  showErr('#su-err', ''); pendingCode = await createAccount(name, setupGender, user, pw); show('code');
+});
+$('#su-demo').addEventListener('click', async ev => {
+  const b = ev.currentTarget; b.disabled = true; b.textContent = 'Wird vorbereitet …';
+  pendingCode = await createAccount('Max', 'm', 'test', 'test123'); await seedDemo(); show('code');
+  b.disabled = false; b.textContent = 'Mit Beispieldaten ausprobieren';
+});
+renderers.setup = () => { $('#demo-box').hidden = !(inFrame || location.protocol === 'file:' || location.hash === '#test'); };
+renderers.code = () => { $('#code-box').textContent = pendingCode; $('#code-ok').checked = false; $('#code-go').disabled = true; };
+$('#code-ok').addEventListener('change', ev => { $('#code-go').disabled = !ev.target.checked; });
+$('#code-go').addEventListener('click', () => { pendingCode = ''; show('home'); });
+$('#code-copy').addEventListener('click', async ev => {
+  const b = ev.currentTarget;
+  try { await navigator.clipboard.writeText(pendingCode); b.textContent = 'Kopiert'; }
+  catch { const r = document.createRange(); r.selectNodeContents($('#code-box')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Markiert, jetzt kopieren'; }
+});
+$('#login-form').addEventListener('submit', async ev => {
+  ev.preventDefault(); const btn = $('#li-btn'); btn.disabled = true; btn.textContent = 'Wird geöffnet …';
+  try { await unlock($('#li-user').value, $('#li-pw').value); showErr('#li-err', ''); show('home'); }
+  catch { KEY = null; S = null; showErr('#li-err', 'Username oder Passwort stimmen nicht. Probier es nochmal in Ruhe.'); }
+  btn.disabled = false; btn.textContent = 'Tagebuch öffnen';
+});
+$('#rec-form').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const code = $('#rc-code').value, user = $('#rc-user').value.trim(), pw = $('#rc-pw').value;
+  if (normCode(code).length !== 16) return showErr('#rc-err', 'Der Code hat 16 Zeichen, zum Beispiel ABCD-EFGH-JKLM-NPQR.');
+  if (user.length < 3) return showErr('#rc-err', 'Der Username braucht mindestens 3 Zeichen.');
+  if (pw.length < 6) return showErr('#rc-err', 'Das Passwort braucht mindestens 6 Zeichen.');
+  try { await recover(code, user, pw); showErr('#rc-err', ''); $('#li-user').value = user; $('#rc-code').value = ''; $('#rc-pw').value = ''; show('login'); }
+  catch { showErr('#rc-err', 'Dieser Code passt nicht. Prüf ihn bitte Zeichen für Zeichen.'); }
+});
+
+/* ---------- Automatisch sperren nach 5 Minuten im Hintergrund ---------- */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); persist(); }
+  else if (KEY && hiddenAt && Date.now() - hiddenAt > 5 * 60 * 1000) lock();
+});
+
+/* ---------- Start ---------- */
+(async function boot() {
+  if (!window.crypto?.subtle) { const f = $('#fatal'); f.hidden = false; f.textContent = 'Dieser Browser unterstützt die Verschlüsselung nicht. Öffne die Seite bitte in Safari über https.'; return; }
+  await DB.open();
+  try { META = await DB.get('meta'); } catch { META = null; }
+  show(META ? 'login' : 'setup');
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+})();
+</script>
+
+</body>
+</html>
